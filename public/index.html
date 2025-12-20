@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>71 Billiards - Đẳng cấp Bida</title>
+    <!-- Link Icon FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 1. Header / Navbar -->
+    <header class="header">
+        <nav class="navbar">
+            <a href="#home" class="active">Trang chủ</a>
+            <a href="#intro">Giới thiệu</a>
+            <a href="#services">Dịch vụ</a>
+            <a href="#branches">Chi nhánh</a>
+            <a href="#footer">Liên hệ</a>
+            <a href="booking.html" class="highlight">Đặt lịch</a>
+            <!-- LỊCH SỬ và ĐĂNG NHẬP sẽ được JS thêm vào đây -->
+        </nav>
+
+        <div class="logo">
+            <div class="logo-text">
+                <i class="fa-solid fa-crown"></i> 71<br><span>BILLIARDS</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. Hero Section (Banner) -->
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <h1>WHERE PASSION MEETS PRECISION</h1>
+            <p>Trải nghiệm không gian Bida đẳng cấp nhất Việt Nam</p>
+            <a href="#branches" class="btn-main">CHỌN CHI NHÁNH NGAY</a>
+        </div>
+    </section>
+
+    <!-- 3. Giới thiệu -->
+    <section id="intro" class="section-padding container">
+        <div class="intro-grid">
+            <div class="intro-text">
+                <h2 class="section-title">VỀ CHÚNG TÔI 71 Billiards</h2>
+                <p>71 Billiards không chỉ là nơi chơi bida, mà là không gian giải trí đẳng cấp dành cho những cơ thủ đam mê sự hoàn hảo.</p>
+                <p>Sở hữu hệ thống bàn <strong>Rasson & Aplus</strong> tiêu chuẩn thi đấu quốc tế, cùng không gian thiết kế sang trọng, hệ thống ánh sáng chống chói chuyên nghiệp.</p>
+                <ul class="feature-list">
+                    <li><i class="fa-solid fa-check"></i> Bàn đạt chuẩn thi đấu Quốc tế</li>
+                    <li><i class="fa-solid fa-check"></i> Bóng Aramith Black nhập khẩu</li>
+                    <li><i class="fa-solid fa-check"></i> Menu đồ uống đa dạng & tinh tế</li>
+                </ul>
+            </div>
+            <div class="intro-img">
+                <img src="images/intro.jpg" alt="Không gian 71 Billiards" onerror="this.src='https://source.unsplash.com/600x400/?billiards'">
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. Dịch vụ -->
+    <section id="services" class="section-padding bg-darker">
+        <div class="container">
+            <h2 class="section-title center">DỊCH VỤ CỦA CHÚNG TÔI</h2>
+            <div class="service-grid">
+                
+                <div class="service-card" onclick="openServiceModal('pool')">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <h3>Bàn Lỗ (Pool)</h3>
+                    <p>Hệ thống bàn Pool Rasson & Aplus đời mới nhất, mặt đá nhập khẩu.</p>
+                </div>
+
+                <div class="service-card" onclick="openServiceModal('carom')">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <h3>Bàn Phăng (France)</h3>
+                    <p>Bàn Hollywood & Gabriels chuẩn thi đấu Carom 3 băng.</p>
+                </div>
+
+                <div class="service-card" onclick="openServiceModal('menu')">
+                    <i class="fa-solid fa-martini-glass-citrus"></i>
+                    <h3>Coffee & Bar</h3>
+                    <p>Phục vụ các loại Cocktail, Cafe và đồ ăn nhẹ thượng hạng.</p>
+                </div>
+
+                <div class="service-card" onclick="openServiceModal('tournament')">
+                    <i class="fa-solid fa-trophy"></i>
+                    <h3>Giải Đấu</h3>
+                    <p>Tổ chức các giải đấu chuyên nghiệp và bán chuyên hàng tháng.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- === KHUNG MODAL POPUP DỊCH VỤ === -->
+    <div id="service-modal" class="custom-modal">
+        <div class="modal-content modal-large">
+            <span class="close-btn" onclick="closeServiceModal()">&times;</span>
+            <div id="modal-body-content"></div>
+        </div>
+    </div>
+
+    <!-- 5. Chi Nhánh -->
+    <section id="branches" class="section-padding container">
+        <h2 class="section-title center">HỆ THỐNG CHI NHÁNH</h2>
+        <div class="branch-grid">
+            
+            <div class="branch-card">
+                <div class="branch-img">
+                    <img src="images/branch1.jpg" alt="CN Quận 1" onerror="this.src='https://images.unsplash.com/photo-1628173499424-3406f5236c53?w=500'">
+                    <span class="badge">71 Billiards Premium</span>
+                </div>
+                <div class="branch-info">
+                    <h3>71 Billiards QUẬN 1</h3>
+                    <p><i class="fa-solid fa-location-dot"></i> 123 Nguyễn Huệ, P. Bến Nghé, Quận 1, TP.HCM</p>
+                    <p><i class="fa-solid fa-phone"></i> 0909.123.456</p>
+                    <a href="booking.html?branch=1" class="btn-border">ĐẶT BÀN CHI NHÁNH NÀY</a>
+                </div>
+            </div>
+
+            <div class="branch-card">
+                <div class="branch-img">
+                    <img src="images/branch2.jpg" alt="CN Quận 7" onerror="this.src='https://images.unsplash.com/photo-1577709865036-cc0f6a15db4a?w=500'">
+                    <span class="badge">71 Billiards Standard</span>
+                </div>
+                <div class="branch-info">
+                    <h3>71 Billiards QUẬN 7</h3>
+                    <p><i class="fa-solid fa-location-dot"></i> 45 Nguyễn Thị Thập, P. Tân Phú, Quận 7, TP.HCM</p>
+                    <p><i class="fa-solid fa-phone"></i> 0909.999.888</p>
+                    <a href="booking.html?branch=2" class="btn-border">ĐẶT BÀN CHI NHÁNH NÀY</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 6. Footer -->
+    <footer id="footer" class="footer-design">
+        <div class="footer-overlay">
+            <div class="container footer-layout">
+                <div class="footer-left">
+                    <p class="footer-sub">THÔNG TIN LIÊN HỆ</p>
+                    <h2 class="footer-brand">71<br>BILLIARDS</h2>
+                    <div class="contact-list">
+                        <p>Trụ sở chính: 123 Nguyễn Huệ, Quận 1, TP.HCM</p>
+                        <p>Email: <a href="mailto:admin@gmail.com" class="link-light">admin@gmail.com</a></p>
+                        <p>Điện thoại: <a href="tel:0932938178" class="link-light">0909.123.456</a></p>
+                        <p>Website: <a href="#" class="link-blue">71billiards.vn</a></p>
+                    </div>
+                </div>
+                <div class="footer-center">
+                    <div class="logo-circle">
+                        <div class="inner-logo">
+                            <i class="fa-solid fa-crown"></i>
+                            <span style="font-size: 24px; font-weight: bold; display: block; margin-top: 5px;">71</span>
+                            <span style="font-size: 10px; letter-spacing: 1px;">BILLIARDS</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="copyright">
+                <p>&copy; 2024 71 Billiards. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- === SIDEBAR NỔI (Bên Phải) === -->
+    <div class="floating-sidebar">
+        <a href="booking.html" class="float-item btn-booking">
+            <div class="icon-box"><i class="fa-regular fa-calendar-days"></i><span class="btn-text">Đặt lịch</span></div>
+            <div class="ripple-ring"></div>
+        </a>
+        <a href="https://zalo.me/0975461744" target="_blank" class="float-item btn-zalo">
+            <div class="icon-box"><span class="zalo-text">Zalo</span></div>
+            <div class="ripple-ring"></div>
+        </a>
+        <a href="tel:0375461744" class="float-item btn-phone">
+            <div class="icon-box"><i class="fa-solid fa-phone"></i></div>
+            <div class="ripple-ring"></div>
+        </a>
+        <a href="javascript:void(0)" class="float-item btn-mess" onclick="toggleChat()">
+            <div class="icon-box"><i class="fa-brands fa-facebook-messenger"></i></div>
+        </a>
+        <div style="height: 20px;"></div>
+        <a href="#home" class="scroll-top-square" id="scrollTopBtn"><i class="fa-solid fa-chevron-up"></i></a>
+    </div>
+
+    <!-- === KHUNG CHAT BOT === -->
+    <div id="chat-widget" class="chat-widget">
+        <div class="chat-header">
+            <div class="chat-info">
+                <div class="chat-avatar"><i class="fa-solid fa-crown"></i></div>
+                <div><span class="chat-title">71 BILLIARDS CSKH</span><span class="chat-status">Thường trả lời ngay lập tức</span></div>
+            </div>
+            <button class="chat-close" onclick="toggleChat()">&times;</button>
+        </div>
+        <div id="chat-body" class="chat-body">
+            <div class="message bot-msg">
+                Xin chào! 👋<br>71 Billiards có thể giúp gì cho bạn?<br>
+                <em style="font-size:11px; color:#666;">(Gõ "giá", "địa chỉ", "đặt bàn" để thử nhé!)</em><br>
+                <em style="font-size:11px; color:#666;">(Hoặc bấm vào menu bên phải để đặt lịch ngay)</em>
+            </div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." onkeypress="handleKeyPress(event)">
+            <button class="btn-send" onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- === TOÀN BỘ SCRIPT JAVASCRIPT === -->
+    <script>
+        // --- 1. SCRIPT QUẢN LÝ LOGIN (Đã thêm mới logic này) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const userStr = localStorage.getItem('user');
+            const nav = document.querySelector('.navbar');
+
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                
+                // Đã login -> Hiện nút Lịch Sử và Admin(nếu có quyền)
+                const historyLink = document.createElement('a');
+                historyLink.href = 'history.html';
+                historyLink.innerText = 'LỊCH SỬ';
+                nav.appendChild(historyLink);
+
+                if (user.role === 'admin') {
+                    const adminLink = document.createElement('a');
+                    adminLink.href = 'admin.html';
+                    adminLink.style.color = '#e74c3c';
+                    adminLink.innerText = 'QUẢN LÝ';
+                    nav.appendChild(adminLink);
+                }
+
+                const logoutLink = document.createElement('a');
+                logoutLink.href = '#';
+                logoutLink.innerText = `ĐĂNG XUẤT (${user.full_name})`;
+                logoutLink.onclick = function() {
+                    localStorage.removeItem('user');
+                    window.location.reload();
+                };
+                nav.appendChild(logoutLink);
+
+            } else {
+                // Chưa login -> Hiện nút Đăng Nhập
+                const loginLink = document.createElement('a');
+                loginLink.href = 'login.html';
+                loginLink.innerText = 'ĐĂNG NHẬP';
+                nav.appendChild(loginLink);
+            }
+        });
+
+        // 2. SCROLL TO TOP
+        window.addEventListener('scroll', function() {
+            var scrollBtn = document.getElementById('scrollTopBtn');
+            if (window.scrollY > 300) scrollBtn.classList.add('show');
+            else scrollBtn.classList.remove('show');
+        });
+
+        // 3. POPUP DỊCH VỤ
+        function openServiceModal(type) {
+            const modal = document.getElementById('service-modal');
+            const content = document.getElementById('modal-body-content');
+            let html = '';
+
+            if (type === 'pool') {
+                html = `
+                    <h2 class="map-title">🎱 SƠ ĐỒ BÀN LỖ (POOL)</h2>
+                    <div class="map-grid">
+                        <a href="booking.html?branch=1&table_id=1" class="table-node"><strong>BÀN 01</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=1&table_id=2" class="table-node"><strong>BÀN 02</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=1&table_id=3" class="table-node"><strong>BÀN 03</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=1&table_id=4" class="table-node"><strong>BÀN 04</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=1&table_id=5" class="table-node vip-node"><strong>VIP 01</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=2&table_id=6" class="table-node"><strong>BÀN 05 (Q7)</strong><small>CN 2</small></a>
+                        <a href="booking.html?branch=2&table_id=7" class="table-node"><strong>BÀN 06 (Q7)</strong><small>CN 2</small></a>
+                    </div>`;
+            } else if (type === 'carom') {
+                html = `
+                    <h2 class="map-title">🔴 SƠ ĐỒ BÀN PHĂNG</h2>
+                    <div class="map-grid">
+                        <a href="booking.html?branch=1" class="table-node carom-node"><strong>PHĂNG 01</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=1" class="table-node carom-node"><strong>PHĂNG 02</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=1" class="table-node carom-node"><strong>PHĂNG 03</strong><small>CN 1</small></a>
+                        <a href="booking.html?branch=2" class="table-node carom-node"><strong>PHĂNG Q7</strong><small>CN 2</small></a>
+                    </div>`;
+            } else if (type === 'menu') {
+                html = `
+                    <h2 class="map-title">🍸 MENU ĐỒ UỐNG</h2>
+                    <div class="menu-list">
+                        <div class="menu-category">Coffee</div>
+                        <div class="menu-item"><h4>Cafe Đen / Sữa</h4> <span>35.000đ</span></div>
+                        <div class="menu-item"><h4>Bạc Xỉu</h4> <span>40.000đ</span></div>
+                        <div class="menu-category">Soft Drinks</div>
+                        <div class="menu-item"><h4>Coca / Pepsi</h4> <span>25.000đ</span></div>
+                        <div class="menu-item"><h4>Sting / Redbull</h4> <span>30.000đ</span></div>
+                         <div class="menu-category">Food</div>
+                        <div class="menu-item"><h4>Mì xào bò</h4> <span>65.000đ</span></div>
+                        <div class="menu-item"><h4>Cơm chiên</h4> <span>70.000đ</span></div>
+                    </div>`;
+            } else if (type === 'tournament') {
+                html = `
+                    <div class="tournament-empty">
+                        <i class="fa-solid fa-calendar-xmark"></i>
+                        <h3 style="color:#eee">CHƯA CÓ GIẢI ĐẤU</h3>
+                        <p style="color:#aaa">Hệ thống chưa có lịch thi đấu mới cho tháng này.</p>
+                    </div>`;
+            }
+
+            content.innerHTML = html;
+            modal.style.display = 'flex';
+        }
+
+        function closeServiceModal() { document.getElementById('service-modal').style.display = 'none'; }
+
+        // 4. CHATBOT LOGIC
+        function toggleChat() {
+            const chatWidget = document.getElementById('chat-widget');
+            if (chatWidget.style.display === 'block') chatWidget.style.display = 'none';
+            else {
+                chatWidget.style.display = 'block';
+                document.getElementById('chat-input').focus();
+            }
+        }
+
+        function handleKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+
+        function sendMessage() {
+            const inputField = document.getElementById('chat-input');
+            const msg = inputField.value.trim();
+            if (!msg) return;
+
+            appendMessage(msg, 'user-msg');
+            inputField.value = '';
+
+            setTimeout(() => {
+                const reply = getBotReply(msg);
+                appendMessage(reply, 'bot-msg');
+            }, 600);
+        }
+
+        function appendMessage(text, className) {
+            const chatBody = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.className = `message ${className}`;
+            div.innerHTML = text;
+            chatBody.appendChild(div);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function getBotReply(msg) {
+            const lowerMsg = msg.toLowerCase();
+            if (lowerMsg.includes('chào') || lowerMsg.includes('hi')) return "Chào bạn! Mình có thể giúp gì cho bạn không?";
+            if (lowerMsg.includes('giá') || lowerMsg.includes('tiền')) return "Giá bàn: Pool 50k/h, Phăng 40k/h, VIP 80k/h.";
+            if (lowerMsg.includes('đặt') || lowerMsg.includes('book')) return "Bạn hãy bấm nút 'Đặt lịch' ở thanh bên phải nhé.";
+            if (lowerMsg.includes('địa chỉ') || lowerMsg.includes('ở đâu')) {
+                return "Hệ thống 71 Billiards có 2 chi nhánh:\n<br>- <b>CN1:</b> 123 Nguyễn Huệ, Quận 1\n<br>- <b>CN2:</b> 45 Nguyễn Thị Thập, Quận 7\n<br>Mời bạn ghé chơi!";
+            }
+            return "Xin lỗi, mình chưa hiểu ý bạn. Bạn hãy thử hỏi về 'giá', 'địa chỉ' hoặc 'đặt bàn' nhé!";
+        }
+    </script>
+</body>
+</html>

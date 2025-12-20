@@ -1,0 +1,766 @@
+/* 1. Thiết lập chung */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #000; /* Nền đen toàn web */
+    color: white;
+    overflow-x: hidden;
+}
+
+/* 2. Header / Navbar */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background-color: #000000; /* Nền đen khớp header mẫu */
+    border-bottom: 1px solid #222; /* Đường kẻ mờ dưới menu */
+}
+
+.navbar a {
+    color: #b0b0b0; /* Màu chữ xám nhạt */
+    text-decoration: none;
+    margin-right: 25px;
+    font-size: 14px;
+    font-weight: 700; /* Chữ đậm */
+    text-transform: uppercase; /* Viết hoa toàn bộ */
+    transition: color 0.3s;
+}
+
+.navbar a:hover, .navbar a.active {
+    color: #fff; /* Hover chuyển trắng */
+}
+
+/* Nút đặt lịch trên menu nếu muốn nổi bật hơn (Tuỳ chọn) */
+/* .navbar a.highlight { color: #fff; border-bottom: 2px solid #fff; padding-bottom: 5px; } */
+
+.logo-text {
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.2;
+    font-size: 18px;
+    color: #fff;
+}
+.logo-text span {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #888;
+}
+
+/* 3. Hero Section (Ảnh nền to) */
+.hero-section {
+    width: 100%;
+    height: 90vh; /* Chiều cao chiếm 90% màn hình */
+    
+    /* Thay đường dẫn ảnh của bạn vào đây */
+    background-image: url('images/bg-home.jpg'); 
+    
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Tạo lớp phủ màu tối (Vignette) ở 2 bên ảnh giống mẫu */
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Hiệu ứng gradient đen mờ dần từ trái qua phải */
+    background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.8) 100%);
+}
+
+/* 4. Sidebar Nổi Bên Phải (Quan trọng) */
+.sticky-sidebar {
+    position: fixed;
+    right: 0;
+    top: 60%;
+    transform: translateY(-50%); /* Căn giữa theo chiều dọc */
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+
+.sidebar-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.8); /* Nền đen mờ */
+    border: 1px solid #fff; /* Viền trắng */
+    margin-bottom: 5px; /* Khoảng cách giữa các nút */
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 20px;
+}
+
+/* Nút ĐẶT LỊCH đầu tiên to hơn và có chữ */
+.sidebar-item.book-btn {
+    height: 60px;
+    font-size: 11px;
+    font-weight: bold;
+    text-align: center;
+    line-height: 1.2;
+    background-color: #000;
+}
+
+.sidebar-item:hover {
+    background-color: #fff;
+    color: #000; /* Đảo màu khi di chuột vào */
+}
+
+/* Màu riêng cho từng icon nếu muốn giống thật */
+.zalo-btn:hover { color: #0068ff; border-color: #0068ff; } /* Màu Zalo */
+.mess-btn:hover { color: #0084ff; border-color: #0084ff; } /* Màu Mesenger */
+/* --- PHẦN THÊM MỚI --- */
+
+/* Scroll mượt mà khi bấm menu */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Các lớp tiện ích */
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+.section-padding { padding: 80px 0; }
+.bg-darker { background-color: #0a0a0a; }
+.center { text-align: center; }
+
+/* Typography Title */
+.section-title {
+    font-size: 32px;
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.section-title::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background-color: #fff;
+    margin-top: 10px;
+    /* Nếu class center thì căn giữa gạch chân */
+}
+.center .section-title::after { margin: 10px auto 0; }
+
+/* 2. Hero Content */
+.hero-content {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+    width: 80%;
+}
+.hero-content h1 { font-size: 48px; letter-spacing: 3px; margin-bottom: 20px; }
+.hero-content p { font-size: 18px; margin-bottom: 30px; color: #ccc; }
+
+.btn-main {
+    padding: 15px 30px;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+.btn-main:hover { background-color: #ddd; }
+
+/* 3. Giới thiệu (Grid Layout) */
+.intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Chia đôi màn hình */
+    gap: 50px;
+    align-items: center;
+}
+.intro-text p { margin-bottom: 15px; line-height: 1.6; color: #b0b0b0; }
+.feature-list { list-style: none; margin-top: 20px; }
+.feature-list li { margin-bottom: 10px; color: white; }
+.feature-list i { margin-right: 10px; color: #f1c40f; /* Màu vàng sang trọng */ }
+.intro-img img {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: -10px 10px 0px rgba(255,255,255,0.1);
+}
+
+/* 4. Dịch vụ (Cards) */
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+}
+.service-card {
+    background: #111;
+    padding: 30px 20px;
+    border: 1px solid #333;
+    text-align: center;
+    transition: 0.3s;
+}
+.service-card:hover { border-color: white; transform: translateY(-5px); }
+.service-card i { font-size: 40px; margin-bottom: 15px; color: #ddd; }
+.service-card h3 { margin-bottom: 10px; font-size: 18px; }
+.service-card p { font-size: 13px; color: #888; }
+
+/* 5. Chi Nhánh */
+.branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 40px;
+}
+.branch-card {
+    background-color: #111;
+    border: 1px solid #333;
+    overflow: hidden;
+    position: relative;
+}
+.branch-img { position: relative; height: 250px; overflow: hidden; }
+.branch-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+.branch-card:hover .branch-img img { transform: scale(1.1); }
+.badge {
+    position: absolute; top: 15px; right: 15px;
+    background: black; color: white; padding: 5px 10px;
+    font-size: 12px; font-weight: bold; border: 1px solid white;
+}
+.branch-info { padding: 25px; text-align: center; }
+.branch-info h3 { margin-bottom: 15px; font-size: 22px; }
+.branch-info p { color: #aaa; margin-bottom: 8px; font-size: 14px; }
+
+.btn-border {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: 1px solid white;
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    text-transform: uppercase;
+    transition: 0.3s;
+}
+.btn-border:hover { background: white; color: black; }
+
+/* 6. Footer */
+/* --- FOOTER DESIGN MỚI --- */
+
+.footer-design {
+    position: relative;
+    width: 100%;
+    /* Ảnh nền: Bạn hãy thay đường dẫn ảnh pool ball vào đây */
+    background-image: url('images/footer-bg.jpg'); 
+    background-size: cover;
+    background-position: center bottom;
+    color: white;
+}
+
+/* Lớp phủ đen mờ để nền tối xuống, làm nổi bật chữ trắng */
+.footer-overlay {
+    background-color: rgba(0, 0, 0, 0.85); /* Độ tối 85% */
+    padding: 60px 0 80px 0;
+    position: relative;
+}
+
+.footer-layout {
+    display: flex;
+    justify-content: space-between; /* Đẩy nội dung ra 2 bên (Trái - Giữa) */
+    align-items: center;
+    position: relative;
+}
+
+/* Phần chữ bên trái */
+.footer-left {
+    max-width: 500px;
+}
+
+.footer-sub {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #bbb;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.footer-brand {
+    font-size: 36px;
+    line-height: 1.2;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.contact-list p {
+    font-size: 15px;
+    margin-bottom: 12px;
+    color: #eee;
+    line-height: 1.5;
+}
+
+/* Màu link web màu xanh giống hình mẫu */
+.link-blue { color: #007bff; text-decoration: none; }
+.link-light { color: #eee; text-decoration: none; }
+.link-light:hover, .link-blue:hover { text-decoration: underline; }
+
+/* LOGO TRÒN Ở GIỮA */
+.footer-center {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Căn chính giữa footer */
+}
+
+.logo-circle {
+    width: 140px;
+    height: 140px;
+    background-color: #333; /* Nền xám đen của vòng tròn */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    border: 2px solid #444;
+}
+
+/* Tạo logo bằng CSS (Hoặc thay bằng thẻ <img> trong HTML) */
+.inner-logo {
+    text-align: center;
+    color: white;
+}
+.inner-logo i { font-size: 40px; margin-bottom: 5px; }
+.inner-logo span { display: block; font-size: 12px; letter-spacing: 1px; }
+
+
+/* Nút Cuộn lên đầu trang (Góc phải dưới) */
+.scroll-top-btn {
+    position: absolute;
+    bottom: 30px;
+    right: 40px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 1px solid #555;
+    background: transparent;
+    color: #777;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.scroll-top-btn:hover {
+    background: white;
+    color: black;
+    border-color: white;
+}
+
+/* Mobile: Sắp xếp lại cho dễ nhìn */
+@media (max-width: 768px) {
+    .footer-layout {
+        flex-direction: column-reverse; /* Đảo ngược để logo lên trên hoặc dưới tùy thích */
+        text-align: center;
+    }
+    .footer-center {
+        position: relative;
+        left: auto;
+        transform: none;
+        margin-bottom: 30px;
+    }
+    .logo-circle { margin: 0 auto; }
+}
+/* --- CSS CHO SERVICE MODAL --- */
+/* (Kế thừa class .custom-modal .modal-content từ bài trước, chỉ thêm tùy chỉnh) */
+
+.modal-large {
+    max-width: 900px !important; /* Popup to hơn để chứa sơ đồ */
+    width: 95% !important;
+    background-color: #111 !important; /* Nền tối sang trọng */
+    color: white !important;
+    border: 1px solid #333 !important;
+}
+
+.close-btn {
+    position: absolute; top: 15px; right: 20px;
+    font-size: 30px; cursor: pointer; color: #aaa;
+}
+.close-btn:hover { color: white; }
+
+/* 1. Giao diện Sơ đồ bàn (Map Grid) */
+.map-title { text-align: center; color: #f1c40f; margin-bottom: 20px; text-transform: uppercase; }
+.map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Tự động chia cột */
+    gap: 15px;
+    padding: 10px;
+}
+
+.table-node {
+    background-color: #004d40; /* Màu bàn nỉ xanh Pool */
+    color: white;
+    padding: 20px 10px;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    text-decoration: none;
+    border: 2px solid #00695c;
+    transition: 0.3s;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+}
+.table-node small { display: block; font-size: 11px; margin-top: 5px; opacity: 0.8; }
+.table-node:hover { transform: scale(1.05); background-color: #00695c; box-shadow: 0 0 10px #f1c40f; }
+
+/* Màu riêng cho bàn Carom (Phăng) - Màu xám xanh */
+.carom-node { background-color: #37474f; border-color: #546e7a; }
+.carom-node:hover { background-color: #455a64; }
+
+/* 2. Giao diện Menu Coffee */
+.menu-list { text-align: left; }
+.menu-item {
+    display: flex; justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px dashed #333;
+}
+.menu-item h4 { margin: 0; color: #ddd; }
+.menu-item span { color: #f1c40f; font-weight: bold; }
+.menu-category { color: #f39c12; font-size: 18px; margin: 20px 0 10px 0; text-transform: uppercase; border-bottom: 2px solid #f39c12; display: inline-block; }
+
+/* 3. Giao diện Giải đấu (Trống) */
+.tournament-empty { text-align: center; padding: 50px 0; }
+.tournament-empty i { font-size: 60px; color: #444; margin-bottom: 20px; }
+/* --- CSS CHO MODAL POPUP (CĂN GIỮA MÀN HÌNH) --- */
+
+.custom-modal {
+    display: none; /* Mặc định ẩn */
+    position: fixed; 
+    z-index: 2000; /* Số to để đè lên mọi thứ */
+    left: 0; top: 0;
+    width: 100%; height: 100%; 
+    background-color: rgba(0, 0, 0, 0.85); /* Nền đen mờ tối */
+    
+    /* 3 DÒNG NÀY QUYẾT ĐỊNH VIỆC NẰM GIỮA: */
+    display: none; /* Giữ nguyên là none, khi JS gọi sẽ đổi thành flex */
+    justify-content: center; /* Căn giữa chiều ngang */
+    align-items: center;     /* Căn giữa chiều dọc */
+}
+
+/* Khung nội dung bên trong */
+.modal-content.modal-large {
+    background-color: #000;      /* Nền đen */
+    color: white;                /* Chữ trắng */
+    border: 1px solid #444;      /* Viền xám */
+    border-radius: 8px;          /* Bo góc */
+    padding: 40px 20px 20px 20px;
+    width: 90%;                  /* Rộng 90% màn hình đt */
+    max-width: 900px;            /* Không quá 900px trên máy tính */
+    max-height: 90vh;            /* Cao tối đa 90% màn hình */
+    overflow-y: auto;            /* Nếu nội dung dài quá thì hiện thanh cuộn */
+    
+    position: relative;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9); /* Đổ bóng đậm */
+    animation: zoomIn 0.3s ease-out; /* Hiệu ứng phóng to khi hiện */
+}
+
+/* Hiệu ứng phóng to */
+@keyframes zoomIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Nút Đóng (X) góc phải */
+.close-btn {
+    position: absolute;
+    top: 10px; right: 20px;
+    font-size: 35px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+}
+.close-btn:hover { color: red; transform: scale(1.1); }
+
+/* --- GIAO DIỆN SƠ ĐỒ BÀN (MAP) --- */
+.map-title {
+    text-align: center;
+    color: #f1c40f;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    font-size: 24px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+}
+
+.map-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Tự chia cột */
+    gap: 15px;
+}
+
+.table-node {
+    background-color: #004d40;
+    color: white; padding: 25px 5px;
+    text-align: center; border-radius: 4px;
+    text-decoration: none; border: 1px solid #00695c;
+    transition: 0.2s;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.table-node:hover { transform: translateY(-5px); background-color: #00796b; border-color: #f1c40f; }
+
+.table-node.vip-node { background-color: #212121; border-color: gold; color: gold; }
+.table-node.carom-node { background-color: #455a64; border-color: #607d8b; }
+
+/* MENU ITEM */
+.menu-list { text-align: left; }
+.menu-category { color: #e67e22; margin-top: 20px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #444; }
+.menu-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #333; }
+.menu-item span { color: #f1c40f; font-weight: bold; }
+
+
+/* --- CSS CHO THANH SIDEBAR NỔI (NEON STYLE) --- */
+
+.floating-sidebar {
+    position: fixed;
+    right: 15px;
+    bottom: 50px; /* Cách đáy màn hình 50px */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Khoảng cách giữa các nút */
+}
+
+/* 1. Style chung cho các nút tròn */
+.float-item {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    background: #00bcd4; /* Màu xanh ngọc (Cyan) */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    box-shadow: 0 0 10px rgba(0, 188, 212, 0.6);
+    border: 3px solid #006064; /* Viền xanh tối tạo độ sâu */
+    transition: 0.3s;
+}
+
+.icon-box {
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.float-item i {
+    font-size: 24px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Riêng nút Đặt lịch */
+.btn-booking i { font-size: 18px; margin-bottom: 2px; }
+.btn-text {
+    font-size: 10px;
+    font-weight: bold;
+    font-family: 'Serif', sans-serif; /* Font kiểu hơi cổ điển */
+    text-transform: capitalize;
+}
+
+/* Riêng nút Zalo (Dùng chữ Zalo đậm) */
+.zalo-text {
+    font-family: sans-serif;
+    font-weight: 900;
+    font-size: 16px;
+    font-style: italic;
+    letter-spacing: -1px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+/* HIỆU ỨNG RIPPLE (VÒNG LAN TỎA) - Làm cho giống đang phát sóng */
+.ripple-ring {
+    position: absolute;
+    width: 100%; height: 100%;
+    background: transparent;
+    border: 2px solid #00e5ff;
+    border-radius: 50%;
+    z-index: 1;
+    opacity: 0;
+    animation: ripple-effect 1.5s infinite;
+}
+
+/* Animation vòng tròn lan ra */
+@keyframes ripple-effect {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* Hiệu ứng khi di chuột */
+.float-item:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #00e5ff;
+    background: #26c6da;
+}
+
+/* --- MÀU SẮC RIÊNG BIỆT --- */
+/* Booking giữ màu Xanh Cyan gốc */
+
+/* Nút Zalo (Màu xanh dương) */
+.btn-zalo { background: #0068ff; border-color: #00378b; }
+.btn-zalo .ripple-ring { border-color: #0068ff; }
+
+/* Nút Phone (Màu xanh lá nhẹ/Cyan giống hình) */
+/* Giữ nguyên mặc định vì hình của bạn Phone cũng màu xanh ngọc */
+
+/* Nút Messenger (Màu xanh dương Messenger) */
+.btn-mess { background: #0084ff; border-color: #004fb9; }
+
+/* 2. Style Nút lên đầu trang (Vuông bo góc) */
+.scroll-top-square {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    background-color: white; /* Nền trắng */
+    color: black;            /* Mũi tên đen */
+    border-radius: 8px;      /* Bo góc vuông */
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    font-size: 20px;
+    font-weight: bold;
+    
+    /* Mặc định ẩn, hiện bằng JS */
+    opacity: 0; 
+    visibility: hidden;
+    transition: all 0.3s ease-in-out;
+}
+
+/* Class để hiện nút Scroll */
+.scroll-top-square.show {
+    opacity: 1;
+    visibility: visible;
+}
+.scroll-top-square:hover {
+    background-color: #f1c40f; /* Di chuột vào đổi màu vàng */
+}
+/* --- CSS CHO CHATBOT GIẢ LẬP MESSENGER --- */
+
+.chat-widget {
+    display: none; /* Mặc định ẩn */
+    position: fixed;
+    right: 90px; /* Nằm bên trái thanh Sidebar nút tròn */
+    bottom: 20px;
+    width: 320px;
+    height: 450px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    z-index: 10000;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    font-family: sans-serif;
+    animation: fadeUp 0.3s ease-in-out;
+}
+
+@keyframes fadeUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Header Xanh Messenger */
+.chat-header {
+    background: #0084ff; /* Màu chuẩn Messenger */
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #0073e6;
+}
+
+.chat-info { display: flex; align-items: center; gap: 10px; }
+.chat-avatar {
+    width: 35px; height: 35px; background: white; color: #0084ff;
+    border-radius: 50%; display: flex; justify-content: center; align-items: center;
+    font-size: 18px;
+}
+.chat-title { font-weight: bold; font-size: 14px; display: block; }
+.chat-status { font-size: 10px; opacity: 0.9; }
+
+.chat-close {
+    background: none; border: none; color: white; font-size: 24px; cursor: pointer;
+}
+
+/* Body Chat */
+.chat-body {
+    height: 340px;
+    background: #f0f2f5;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Tin nhắn */
+.message {
+    max-width: 80%;
+    padding: 8px 12px;
+    border-radius: 15px;
+    font-size: 13px;
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word;
+}
+
+/* Tin nhắn của BOT (Màu trắng) */
+.bot-msg {
+    background: white;
+    color: black;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Tin nhắn của USER (Màu xanh) */
+.user-msg {
+    background: #0084ff;
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+/* Footer nhập liệu */
+.chat-footer {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #ddd;
+    background: white;
+}
+.chat-footer input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    background: #f0f2f5;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+.btn-send {
+    background: none; border: none;
+    color: #0084ff; font-size: 18px; cursor: pointer;
+}
+.btn-send:hover { color: #0063cc; }

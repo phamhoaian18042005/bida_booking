@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - 71 Billiards</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        body { 
+            display: flex; align-items: center; justify-content: center; 
+            height: 100vh; background: #050505; 
+            font-family: sans-serif;
+        }
+        
+        /* Khung Đăng Nhập */
+        .auth-box {
+            background: #111; 
+            padding: 40px; 
+            border-radius: 12px; 
+            border: 1px solid #333; 
+            width: 350px; 
+            text-align: center; 
+            color: white;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .auth-box h2 { color: #f1c40f; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        input { 
+            width: 100%; padding: 12px; margin: 10px 0; 
+            background: #222; border: 1px solid #444; 
+            color: white; border-radius: 5px; box-sizing: border-box; 
+            outline: none;
+        }
+        input:focus { border-color: #007bff; }
+
+        button.btn-login { 
+            width: 100%; padding: 12px; 
+            background: #0056b3; 
+            border: none; color: white; 
+            border-radius: 5px; cursor: pointer; 
+            font-weight: bold; margin-top: 15px; 
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+        button.btn-login:hover { background: #007bff; }
+
+        .link { margin-top: 15px; font-size: 13px; color: #888; }
+        .link a { color: #f1c40f; text-decoration: none; }
+        .link a:hover { text-decoration: underline; }
+
+        /* --- CSS CHO MODAL THÔNG BÁO --- */
+        .custom-modal {
+            display: none; /* Mặc định ẩn */
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; top: 0;
+            width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.85); 
+            align-items: center; 
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%; max-width: 400px;
+            text-align: center;
+            border-top: 5px solid #007bff;
+            animation: zoomIn 0.3s ease-out;
+        }
+
+        @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-logo {
+            font-size: 20px; font-weight: bold; margin-bottom: 15px;
+            display: inline-block; padding: 5px 15px;
+            background: black; color: white;
+        }
+        
+        .btn-modal {
+            background: #007bff; color: white; border: none; 
+            padding: 10px 30px; border-radius: 5px; 
+            cursor: pointer; font-weight: bold; margin-top: 20px;
+        }
+        .btn-modal:hover { background: #0056b3; }
+
+        /* Loading spinner nhỏ để hiện khi đang chuyển trang */
+        .spinner-loader {
+            border: 4px solid #f3f3f3; border-top: 4px solid #007bff;
+            border-radius: 50%; width: 20px; height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block; margin-right: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="auth-box">
+        <h2>Đăng Nhập</h2>
+        <form id="login-form">
+            <input type="text" id="username" placeholder="Tên đăng nhập" required>
+            <input type="password" id="password" placeholder="Mật khẩu" required>
+            <button type="submit" class="btn-login">ĐĂNG NHẬP</button>
+        </form>
+        
+        <div class="link">
+            Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+        </div>
+        <div class="link"><a href="index.html">← Về trang chủ</a></div>
+    </div>
+
+    <!-- MODAL THÔNG BÁO -->
+    <div id="notification-modal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-logo">71 BILLIARDS</div>
+            
+            <h3 id="modal-title" style="margin-bottom: 10px; color:#222;">Thông báo</h3>
+            
+            <!-- Phần hiển thị thông báo -->
+            <div id="modal-body">
+                <p id="modal-message" style="color:#555;"></p>
+                <!-- Dòng loading này sẽ hiện khi thành công -->
+                <div id="loading-div" style="display:none; margin-top:15px; color:#007bff; font-weight:bold;">
+                    <div class="spinner-loader"></div> Đang vào hệ thống...
+                </div>
+            </div>
+
+            <!-- Nút OK chỉ hiện khi lỗi -->
+            <button id="modal-btn" class="btn-modal" onclick="closeModal()">OK, ĐÃ HIỂU</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username, password})
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    // 1. Lưu thông tin user
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // 2. Xác định trang đích
+                    const targetUrl = data.user.role === 'admin' ? 'admin.html' : 'index.html';
+
+                    // 3. Hiện Modal THÀNH CÔNG (Tự chuyển hướng)
+                    showSuccessAndRedirect("ĐĂNG NHẬP THÀNH CÔNG", 
+                        `Xin chào <b>${data.user.full_name}</b>.`, 
+                        targetUrl
+                    );
+                
+                } else {
+                    // 4. Hiện Modal LỖI (Phải bấm nút mới tắt)
+                    showError("ĐĂNG NHẬP THẤT BẠI", data.message);
+                }
+            } catch (err) { 
+                showError("LỖI KẾT NỐI", "Không thể kết nối đến máy chủ."); 
+            }
+        });
+
+        // --- XỬ LÝ KHI THÀNH CÔNG ---
+        function showSuccessAndRedirect(title, msg, url) {
+            // Đổi màu viền xanh
+            document.querySelector('.modal-content').style.borderTopColor = "#007bff"; 
+            document.getElementById('modal-title').style.color = "#007bff";
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerHTML = msg;
+
+            // Ẩn nút OK đi để người dùng không bấm
+            document.getElementById('modal-btn').style.display = 'none';
+            // Hiện dòng Loading
+            document.getElementById('loading-div').style.display = 'block';
+
+            document.getElementById('notification-modal').style.display = 'flex';
+
+            // Tự động chuyển sau 1.5 giây
+            setTimeout(() => {
+                window.location.href = url;
+            }, 1500);
+        }
+
+        // --- XỬ LÝ KHI LỖI ---
+        function showError(title, msg) {
+            // Đổi màu viền đỏ
+            document.querySelector('.modal-content').style.borderTopColor = "#e74c3c"; 
+            document.getElementById('modal-title').style.color = "#e74c3c";
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerHTML = msg;
+
+            // Hiện nút OK để tắt, ẩn Loading
+            document.getElementById('modal-btn').style.display = 'inline-block';
+            document.getElementById('loading-div').style.display = 'none';
+
+            document.getElementById('notification-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('notification-modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

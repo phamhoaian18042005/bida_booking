@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký - 71 Billiards</title>
+    <!-- CSS tương tự login cho đồng bộ -->
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #000;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0; color: white;
+        }
+
+        .login-box {
+            background: #111;
+            padding: 40px; border-radius: 10px; width: 350px;
+            border: 1px solid #333; text-align: center;
+            box-shadow: 0 0 20px rgba(0,255,0, 0.1); /* Bóng màu xanh lá */
+        }
+
+        .login-box h2 { color: #28a745; margin-bottom: 25px; text-transform: uppercase; }
+
+        input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: #222; border: 1px solid #444; color: white;
+            border-radius: 5px; box-sizing: border-box; outline: none;
+        }
+        input:focus { border-color: #28a745; }
+
+        .btn-submit {
+            width: 100%; padding: 12px; margin-top: 15px;
+            background: #28a745; color: white; border: none;
+            border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px;
+            transition: 0.3s;
+        }
+        .btn-submit:hover { background: #218838; }
+
+        .link-text { margin-top: 15px; font-size: 14px; color: #aaa; }
+        .link-text a { color: #f1c40f; text-decoration: none; }
+        
+        /* --- CSS CHO MODAL THÔNG BÁO --- */
+        .custom-modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.8);
+            align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: #1e1e1e; color: white; padding: 30px; border-radius: 10px;
+            text-align: center; width: 300px; border: 1px solid #444;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+            animation: slideDown 0.3s ease-out;
+        }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-icon { font-size: 40px; color: #28a745; margin-bottom: 15px; display: block; }
+        .spinner { margin-top: 15px; width: 20px; height: 20px; border: 3px solid #555; border-top: 3px solid #28a745; border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+    <!-- Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>Đăng Ký</h2>
+        <form id="register-form">
+            <!-- 1. Username -->
+            <input type="text" id="username" placeholder="Tên đăng nhập" required>
+            
+            <!-- 2. Password -->
+            <input type="password" id="password" placeholder="Mật khẩu" required>
+            
+            <!-- 3. Fullname -->
+            <input type="text" id="fullname" placeholder="Họ và tên hiển thị" required>
+            
+            <!-- 4. Phone (Validation here) -->
+            <input type="text" id="phone" placeholder="Số điện thoại (10 số)" required>
+
+            <button type="submit" class="btn-submit">ĐĂNG KÝ</button>
+        </form>
+        <div class="link-text">
+            Đã có tài khoản? <a href="login.html">Đăng nhập</a>
+        </div>
+    </div>
+
+    <!-- MODAL THÔNG BÁO THÀNH CÔNG -->
+    <div id="success-modal" class="custom-modal">
+        <div class="modal-content">
+            <i class="fa-solid fa-circle-check modal-icon"></i>
+            <h3 style="margin: 0 0 10px 0;">Đăng Ký Thành Công!</h3>
+            <p style="color: #bbb; font-size: 14px; margin-bottom: 10px;">Chào mừng thành viên mới của<br>71 BILLIARDS</p>
+            <p style="font-size: 13px; color: #28a745;">
+                <div class="spinner"></div> Đang chuyển hướng...
+            </p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const fullname = document.getElementById('fullname').value;
+            const phone = document.getElementById('phone').value;
+
+            // --- 1. VALIDATION SỐ ĐIỆN THOẠI (Yêu cầu của bạn) ---
+            const phoneRegex = /^0\d{9}$/; 
+            // ^0 : Bắt đầu bằng số 0
+            // \d{9} : Theo sau là 9 chữ số bất kỳ
+            // $ : Kết thúc chuỗi (đảm bảo tổng là 10 số)
+
+            if (!phoneRegex.test(phone)) {
+                alert("⛔ Số điện thoại không hợp lệ!\n- Phải bắt đầu bằng số 0.\n- Phải có đúng 10 số.");
+                return; // Dừng lại không gửi dữ liệu
+            }
+
+            try {
+                // Gửi dữ liệu lên Server
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username, 
+                        password,
+                        full_name: fullname, 
+                        phone: phone 
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // --- 2. XỬ LÝ KHI THÀNH CÔNG (Giống yêu cầu) ---
+                    
+                    // Hiện Modal Đẹp
+                    document.getElementById('success-modal').style.display = 'flex';
+
+                    // Chờ 1.5 giây (1500ms) rồi tự chuyển trang
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+
+                } else {
+                    alert("❌ Lỗi: " + data.message);
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi kết nối Server.");
+            }
+        });
+    </script>
+
+</body>
+</html>

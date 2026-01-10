@@ -116,6 +116,12 @@
             if (!phoneRegex.test(phone)) {
                 alert("⛔ Số điện thoại không hợp lệ!\n- Phải bắt đầu bằng số 0.\n- Phải có đúng 10 số.");
                 return; // Dừng lại không gửi dữ liệu
+
+                 // --- [THÊM MỚI] 2. VALIDATION MẬT KHẨU ---
+            if (password.length < 8) {
+                alert("⛔ Mật khẩu quá ngắn!\n- Mật khẩu phải có ít nhất 8 ký tự.");
+                return; // Dừng lại, không gửi về server
+            }
             }
 
             try {

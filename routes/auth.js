@@ -6,6 +6,12 @@ const db = require('../db');
 // Đăng ký
 router.post('/register', (req, res) => {
     const { username, password, full_name, phone } = req.body;
+
+      // --- [THÊM MỚI] KIỂM TRA ĐỘ DÀI MẬT KHẨU ---
+    if (!password || password.length < 8) {
+        return res.status(400).json({ message: "Mật khẩu phải có ít nhất 8 ký tự!" });
+    }
+    
     db.query("SELECT * FROM users WHERE username = ? OR phone = ?", [username, phone], (err, results) => {
         if(err) return res.status(500).json(err);
         if(results.length > 0) return res.status(400).json({ message: "Tài khoản hoặc SĐT đã tồn tại!" });

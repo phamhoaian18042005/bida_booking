@@ -126,10 +126,30 @@ app.get('/api/admin/search', (req, res) => {
     [`%${req.query.q}%`], (err, results) => { if(err) return res.status(500).json(err); res.json(results); });
 });
 
+// API 4: Xem lịch sử (Đã sửa để lấy đúng Hình thức thanh toán)
 app.get('/api/history/:userId', (req, res) => {
-    const sql = `SELECT b.id, b.user_id, b.customer_name, t.name as table_name, b.start_time, b.end_time, b.status, b.total_price 
-                 FROM bookings b JOIN tables t ON b.table_id = t.id WHERE b.user_id = ? ORDER BY b.start_time DESC`;
-    db.query(sql, [req.params.userId], (err, results) => { if(err) return res.status(500).json(err); res.json(results); });
+    const userId = req.params.userId;
+    const sql = `
+        SELECT 
+            b.id, 
+            b.user_id, 
+            b.customer_name, 
+            t.name as table_name, 
+            t.branch_id, 
+            b.start_time, 
+            b.end_time, 
+            b.status, 
+            b.total_price,
+            b.payment_method  -- <--- BẮT BUỘC PHẢI CÓ DÒNG NÀY
+        FROM bookings b
+        JOIN tables t ON b.table_id = t.id
+        WHERE b.user_id = ?
+        ORDER BY b.start_time DESC
+    `;
+    db.query(sql, [userId], (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results);
+    });
 });
 
 // Hủy đơn

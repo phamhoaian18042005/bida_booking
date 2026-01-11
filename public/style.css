@@ -764,3 +764,21 @@ html {
     color: #0084ff; font-size: 18px; cursor: pointer;
 }
 .btn-send:hover { color: #0063cc; }
+
+/* --- TRẠNG THÁI BÀN ĐANG CHƠI --- */
+.busy-node {
+    border-color: #ef4444 !important;
+    background: repeating-linear-gradient(
+      45deg,
+      #282828,
+      #282828 10px,
+      #1f1f1f 10px,
+      #1f1f1f 20px
+    ) !important;
+    opacity: 0.9;
+    color: #ef4444 !important; /* Chữ đỏ */
+}
+
+/* Sửa lại text bên trong khi busy */
+.busy-node strong { text-decoration: underline; }
+.busy-node:hover { transform: none; box-shadow: none; cursor: pointer; border: 2px solid red !important; }

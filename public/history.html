@@ -35,9 +35,9 @@
         .st-completed { background-color: rgba(255, 255, 255, 0.1); color: #bbb; border: 1px solid #555; }
 
         /* Thanh toán Tags */
-        .pay-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
-        .pay-online { background-color: #0ea5e9; color: white; }
-        .pay-cash { background-color: #f59e0b; color: black; }
+        .pay-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; font-weight: bold; }
+        .pay-online { background-color: #007bff; color: white; border: 1px solid #0056b3; }
+        .pay-cash { background-color: #f39c12; color: black; border: 1px solid #e67e22; }
 
         .btn-cancel { background-color: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 6px 12px; font-size: 12px; cursor: pointer; border-radius: 4px; transition: 0.3s; }
         .btn-cancel:hover { background-color: #e74c3c; color: white; }
@@ -78,7 +78,7 @@
                 <thead>
                     <tr>
                         <th>#ID</th>
-                        <th>Khách & Chi nhánh</th> <!-- Gộp lại cho gọn -->
+                        <th>Khách & Chi nhánh</th>
                         <th>Chi tiết bàn</th>
                         <th>Ngày & Giờ</th>
                         <th>Thanh toán</th>
@@ -125,9 +125,9 @@
         const userId = currentUser.id;
         document.getElementById('user-display-name').innerText = currentUser.username || currentUser.full_name;
 
-        // --- CÁC HÀM FORMAT GIỜ VIỆT NAM (CODE BẠN GỬI ĐÂY) ---
+        // --- CÁC HÀM FORMAT GIỜ VIỆT NAM (CHUẨN) ---
         function formatTime(dateString) {
-            // Thêm timeZone: 'Asia/Ho_Chi_Minh' để ép về giờ VN chuẩn
+            // Thêm timeZone: Asia/Ho_Chi_Minh
             return new Date(dateString).toLocaleTimeString('vi-VN', { 
                 hour: '2-digit', 
                 minute: '2-digit',
@@ -146,7 +146,7 @@
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
         }
 
-        // --- GỌI API LẤY LỊCH SỬ ---
+        // --- GỌI API ---
         fetch(`${API_URL}/history/${userId}`)
             .then(res => res.json())
             .then(data => {
@@ -164,17 +164,18 @@
                     const diffMs = start - now;
                     const minutesLeft = Math.floor(diffMs / 1000 / 60);
 
-                    // Trạng thái đơn hàng
+                    // Logic Status
                     let statusBadge = '', actionButton = '';
                     if (item.status === 'confirmed') {
                         statusBadge = `<span class="status-badge st-confirmed">Đã đặt</span>`;
-                        // Nếu còn > 20p thì hiện nút Hủy
+                        
                         if (minutesLeft >= 20) {
                             actionButton = `<button class="btn-cancel" onclick="openConfirmModal(${item.id})">Hủy đơn</button>`;
                         } else if (minutesLeft > 0) {
                             actionButton = `<button class="btn-cancel disabled" title="Phải hủy trước 20 phút">Quá giờ hủy</button>`;
                         } else {
-                            statusBadge = `<span class="status-badge st-completed">Đang/Đã xong</span>`;
+                            // Quá giờ coi như đã chơi xong hoặc đang chơi
+                            statusBadge = `<span class="status-badge st-completed">Đã/Đang chơi</span>`;
                             actionButton = `<span style="color:#555">-</span>`;
                         }
                     } else if (item.status === 'cancelled') {
@@ -185,33 +186,29 @@
                         actionButton = `<span style="color:#555">-</span>`;
                     }
 
-                    // Tên hiển thị
                     const customerDisplay = item.customer_name || currentUser.username;
-                    
-                    // Phương thức thanh toán (Thêm Tag màu cho đẹp)
-                    let paymentMethodHtml = '';
-                    if (item.payment_method && item.payment_method.includes('Tiền mặt')) {
-                        paymentMethodHtml = `<span class="pay-tag pay-cash"><i class="fa-solid fa-money-bill"></i> Tiền mặt</span>`;
-                    } else {
-                        paymentMethodHtml = `<span class="pay-tag pay-online"><i class="fa-solid fa-credit-card"></i> Online</span>`;
-                    }
+                    const branchInfo = `CN ${item.branch_id || '1'}`;
 
-                    // Hiển thị chi nhánh
-                    let branchInfo = `CN ${item.branch_id || '1'}`; // Mặc định là 1 nếu ko có dữ liệu
+                    // XỬ LÝ THANH TOÁN HIỂN THỊ
+                    let payMethodHtml = '';
+                    const method = item.payment_method || 'Tiền mặt'; // Nếu null coi là tiền mặt
+                    
+                    if (method === 'Tiền mặt' || method.includes('Tiền mặt')) {
+                        payMethodHtml = `<span class="pay-tag pay-cash"><i class="fa-solid fa-money-bill"></i> Tiền mặt</span>`;
+                    } else {
+                        payMethodHtml = `<span class="pay-tag pay-online"><i class="fa-solid fa-credit-card"></i> Online</span>`;
+                    }
 
                     tbody.innerHTML += `
                         <tr>
                             <td>#${item.id}</td>
-                            <td>
-                                <b>${customerDisplay}</b><br>
-                                <span style="font-size:11px; color:#888;">${branchInfo}</span>
-                            </td>
+                            <td><b>${customerDisplay}</b><br><span style="font-size:11px;color:#888;">${branchInfo}</span></td>
                             <td style="color:#f1c40f; font-weight:500">${item.table_name}</td>
                             <td>
-                                <div style="font-weight:bold">${formatTime(item.start_time)} - ${formatTime(item.end_time)}</div>
-                                <div style="font-size:11px; color:#888">${formatDate(item.start_time)}</div>
+                                <b>${formatTime(item.start_time)} - ${formatTime(item.end_time)}</b><br>
+                                <span style="font-size:11px; color:#aaa">${formatDate(item.start_time)}</span>
                             </td>
-                            <td>${paymentMethodHtml}</td>
+                            <td>${payMethodHtml}</td>
                             <td style="font-weight:bold; color:#4ade80;">${formatCurrency(item.total_price)}</td>
                             <td>${statusBadge}</td>
                             <td style="text-align:center;">${actionButton}</td>
@@ -221,7 +218,7 @@
             })
             .catch(err => console.error(err));
 
-        // --- LOGIC HỦY BÀN ---
+        // --- HỦY BÀN ---
         function openConfirmModal(id) { deleteIdTemp = id; document.getElementById('confirm-modal').style.display = 'flex'; }
         function closeConfirmModal() { deleteIdTemp = null; document.getElementById('confirm-modal').style.display = 'none'; }
 

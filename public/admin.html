@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản trị - 71 Billiards</title>
     <!-- Icon FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +26,7 @@
         .card-rev { border-color: #22c55e; } .card-rev p { color: #4ade80; }
         .card-cancel { border-color: #ef4444; }
 
-        /* --- STYLE CHO THANH TÌM KIẾM (MỚI) --- */
+        /* STYLE CHO THANH TÌM KIẾM */
         .list-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-top: 30px; margin-bottom: 15px;
@@ -101,7 +102,7 @@
         </div>
 
         <!-- DOANH THU THÁNG -->
-        <h3 class="section-heading" style="border-left: 4px solid #facc15; padding-left: 10px; margin-bottom: 15px; color:white;">DOANH THU THEO THÁNG</h3>
+        <h3 class="section-heading" style="border-left: 4px solid #facc15; padding-left: 10px; margin-bottom: 15px; color:white; font-size:18px; font-weight:bold;">DOANH THU THEO THÁNG</h3>
         <div class="table-wrap">
             <table class="month-table">
                 <thead><tr><th>Năm</th><th>Tháng</th><th>Số đơn xong</th><th>Doanh Thu Tháng</th></tr></thead>
@@ -109,12 +110,12 @@
             </table>
         </div>
 
-        <!-- THANH TIÊU ĐỀ + TÌM KIẾM (MỚI) -->
+        <!-- THANH TIÊU ĐỀ + TÌM KIẾM -->
         <div class="list-header">
             <h3 class="section-heading" style="border:none; padding:0; margin:0;">DANH SÁCH ĐƠN ĐẶT HÀNG</h3>
             
             <div class="search-box">
-                <input type="text" id="search-inp" placeholder="Tìm tên khách, số ĐT..." onkeypress="if(event.key==='Enter') executeSearch()">
+                <input type="text" id="search-inp" placeholder="Tìm tên khách..." onkeypress="if(event.key==='Enter') executeSearch()">
                 <button class="btn-search" onclick="executeSearch()"><i class="fa-solid fa-magnifying-glass"></i> Tìm</button>
                 <button class="btn-refresh" onclick="loadData()" title="Làm mới"><i class="fa-solid fa-rotate-right"></i></button>
             </div>
@@ -155,48 +156,34 @@
 
         // --- HÀM TẢI DỮ LIỆU ---
         async function loadData() {
-            // Reset input tìm kiếm
-            document.getElementById('search-inp').value = '';
+            document.getElementById('search-inp').value = ''; // Clear search box
             
             try {
-                // 1. TẢI BOOKINGS
                 const res = await fetch(`${API_URL}/admin/bookings`);
                 const data = await res.json();
-                renderTable(data);
+                renderTable(data); // Render danh sách
 
-                // 2. TẢI DOANH THU THÁNG
                 const resM = await fetch(`${API_URL}/admin/revenue/monthly`);
                 const months = await resM.json();
-                renderMonths(months);
+                renderMonths(months); // Render tháng
 
             } catch(e) { console.error(e); }
         }
 
-        // --- HÀM TÌM KIẾM (GỌI API SEARCH) ---
+        // --- HÀM TÌM KIẾM ---
         async function executeSearch() {
             const keyword = document.getElementById('search-inp').value.trim();
-            if (!keyword) {
-                alert("Vui lòng nhập tên khách cần tìm!");
-                return;
-            }
+            if (!keyword) { alert("Vui lòng nhập tên khách!"); return; }
 
             try {
-                // Gọi API Search (Phải chắc chắn server.js đã có API này)
                 const res = await fetch(`${API_URL}/admin/search?q=${keyword}`);
                 const data = await res.json();
-                
-                if (data.length === 0) {
-                    alert("Không tìm thấy đơn hàng nào của khách: " + keyword);
-                } else {
-                    renderTable(data); // Tái sử dụng hàm vẽ bảng
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Lỗi tìm kiếm. Bạn đã thêm code API Search vào server.js chưa?");
-            }
+                if (data.length === 0) { alert("Không tìm thấy kết quả!"); } 
+                else { renderTable(data); }
+            } catch (err) { alert("Lỗi tìm kiếm"); }
         }
 
-        // --- RENDER BẢNG CHÍNH (Đã hỗ trợ hiển thị Thanh Toán) ---
+        // --- RENDER BẢNG CHÍNH (Đã Fix giờ VN + Thanh Toán) ---
         function renderTable(data) {
             const tbody = document.getElementById('main-list');
             tbody.innerHTML = '';
@@ -206,13 +193,14 @@
 
             if (data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px; color:#aaa;">Không có dữ liệu</td></tr>';
-                // Không return để nó vẫn cập nhật số 0 lên thống kê
             }
 
             data.forEach(item => {
+                // Tính toán
                 if (item.status === 'cancelled') cancel++;
                 else revenue += Number(item.total_price || 0);
 
+                // Trạng thái đơn
                 let badgeClass='st-done', badgeText='Hoàn thành', btns='<span style="color:#666">-</span>';
                 if (item.status === 'confirmed') {
                     badgeClass = 'st-ok'; badgeText = 'Đã đặt';
@@ -222,7 +210,7 @@
                     badgeClass = 'st-can'; badgeText = 'Đã hủy';
                 }
 
-                // Xử lý cột thanh toán
+                // Cột thanh toán
                 const pMethod = item.payment_method || 'Tiền mặt';
                 let payStatusHtml = '';
                 if (item.status === 'cancelled') {
@@ -237,16 +225,21 @@
                     }
                 }
 
-                const date = new Date(item.start_time).toLocaleDateString('vi-VN');
-                const timeStr = new Date(item.start_time).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}) 
-                                + " -> " + new Date(item.end_time).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+                // --- SỬA GIỜ: Ép múi giờ Asia/Ho_Chi_Minh ---
+                const timeOpts = { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' };
+                const dateOpts = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh' };
+
+                const startStr = new Date(item.start_time).toLocaleTimeString('vi-VN', timeOpts);
+                const endStr = new Date(item.end_time).toLocaleTimeString('vi-VN', timeOpts);
+                const dateStr = new Date(item.start_time).toLocaleDateString('vi-VN', dateOpts);
+                // ----------------------------------------------------
 
                 tbody.innerHTML += `
                     <tr>
                         <td style="color:#888">#${item.id}</td>
                         <td class="highlight-text" style="color:#facc15; font-weight:bold">${item.customer_name || 'Khách'}</td>
                         <td style="color:white;">${item.table_name || '...'}</td>
-                        <td class="price-text">${fmt.format(item.total_price)}<br><span style="font-size:11px;color:#94a3b8;font-weight:normal">${timeStr}<br>${date}</span></td>
+                        <td class="price-text">${fmt.format(item.total_price)}<br><span style="font-size:11px;color:#94a3b8;font-weight:normal">${startStr} -> ${endStr}<br>${dateStr}</span></td>
                         <td>${payStatusHtml}</td>
                         <td><span class="badge ${badgeClass}">${badgeText}</span></td>
                         <td>${btns}</td>
@@ -254,8 +247,7 @@
                 `;
             });
 
-            // Nếu đang là chế độ tìm kiếm thì không nên cập nhật tổng thống kê gốc, nhưng để đơn giản mình cứ update
-            // (Nếu muốn xịn hơn thì khi search không update ô Card thống kê)
+            // Chỉ cập nhật thống kê khi KHÔNG phải là đang tìm kiếm
             if (document.getElementById('search-inp').value === '') {
                 document.getElementById('st-total').innerText = count;
                 document.getElementById('st-cancel').innerText = cancel;
@@ -281,9 +273,9 @@
             });
         }
 
-        // --- UPDATE STATUS ---
+        // --- UPDATE ---
         async function updateStatus(id, status) {
-            let msg = status === 'cancelled' ? "Xác nhận HỦY?" : "Xác nhận khách đã CHƠI XONG?";
+            let msg = status === 'cancelled' ? "Xác nhận HỦY?" : "Xác nhận khách đã CHƠI XONG và THANH TOÁN?";
             if(!confirm(msg)) return;
 
             try {

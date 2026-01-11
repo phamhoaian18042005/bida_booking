@@ -60,29 +60,9 @@ app.post('/api/register', (req, res) => {
 });
 
 // List Bàn
-// ============================================
-// API 1: DANH SÁCH BÀN (CÓ CHECK TRẠNG THÁI ĐANG CHƠI)
-// ============================================
 app.get('/api/tables', (req, res) => {
-    // Chỉ lấy tham số branch_id nếu client có gửi lên
-    const branchQuery = req.query.branch_id ? "AND t.branch_id = ?" : "";
-    const params = req.query.branch_id ? [req.query.branch_id] : [];
-
-    // SQL thông minh: Check xem giờ hiện tại (UTC) có nằm trong khoảng chơi nào không
-    // NOW() trên Render là UTC. Dữ liệu start_time lưu trong DB cũng nên so khớp theo thời gian thực.
-    const sql = `
-        SELECT t.*, 
-        (
-            SELECT COUNT(*) FROM bookings b 
-            WHERE b.table_id = t.id 
-            AND b.status = 'confirmed' 
-            AND NOW() >= b.start_time AND NOW() <= b.end_time
-        ) as is_busy
-        FROM tables t 
-        WHERE t.is_active = 1 ${branchQuery}
-    `;
-    
-    db.query(sql, params, (err, results) => {
+    const branchId = req.query.branch_id || 1;
+    db.query("SELECT * FROM tables WHERE branch_id = ? AND is_active = 1", [branchId], (err, results) => {
         if (err) return res.status(500).json(err);
         res.json(results);
     });

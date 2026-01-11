@@ -2,108 +2,64 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch Sử - 71 Billiards</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     
     <style>
         body { background-color: #050505; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        .page-header {
-            padding: 40px 20px; text-align: center;
-            background: linear-gradient(to bottom, #111, #050505); border-bottom: 1px solid #333;
-        }
+        .page-header { padding: 40px 20px; text-align: center; background: linear-gradient(to bottom, #111, #050505); border-bottom: 1px solid #333; }
         .page-header h1 { margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px; }
-        .page-header p { color: #888; margin-top: 10px; font-size: 14px; }
-
         .container { max-width: 1000px; margin: 30px auto; padding: 0 15px; flex: 1; }
-
-        .table-responsive { overflow-x: auto; }
-        table {
-            width: 100%; border-collapse: collapse; background-color: #111;
-            border-radius: 8px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-        }
+        
+        table { width: 100%; border-collapse: collapse; background-color: #111; border-radius: 8px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
         th { background-color: #1a1a1a; color: #ccc; font-size: 12px; text-transform: uppercase; padding: 15px; text-align: left; border-bottom: 2px solid #333; }
         td { padding: 15px; border-bottom: 1px solid #222; color: #eee; font-size: 14px; vertical-align: middle; }
         tr:hover { background-color: #1f1f1f; transition: 0.3s; }
 
-        /* Badge & Button styles */
-        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; }
-        .st-confirmed { background-color: rgba(40, 167, 69, 0.2); color: #2ecc71; border: 1px solid #2ecc71; }
-        .st-cancelled { background-color: rgba(231, 76, 60, 0.2); color: #e74c3c; border: 1px solid #e74c3c; }
-        .st-completed { background-color: rgba(255, 255, 255, 0.1); color: #bbb; border: 1px solid #555; }
+        .st-badge { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .st-cf { border: 1px solid #2ecc71; color: #2ecc71; }
+        .st-cc { border: 1px solid #e74c3c; color: #e74c3c; }
+        .st-cp { border: 1px solid #aaa; color: #aaa; }
 
-        /* Thanh toán Tags */
-        .pay-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; font-weight: bold; }
-        .pay-online { background-color: #007bff; color: white; border: 1px solid #0056b3; }
-        .pay-cash { background-color: #f39c12; color: black; border: 1px solid #e67e22; }
+        .pay-tag { font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+        .pay-on { background: #007bff; color: white; }
+        .pay-cs { background: #f39c12; color: black; }
 
-        .btn-cancel { background-color: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 6px 12px; font-size: 12px; cursor: pointer; border-radius: 4px; transition: 0.3s; }
-        .btn-cancel:hover { background-color: #e74c3c; color: white; }
-        .btn-cancel.disabled { border-color: #444; color: #555; cursor: not-allowed; background: transparent; }
-
+        .btn-cancel { color: #e74c3c; border: 1px solid #e74c3c; background:none; padding: 6px 12px; font-size: 12px; cursor: pointer; border-radius: 4px; }
+        .btn-cancel:hover { background: #e74c3c; color: white; }
         .back-btn { display: inline-block; margin-top: 20px; color: #888; text-decoration: none; }
-        .back-btn:hover { color: white; }
-
-        /* MODAL */
-        .custom-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; }
-        .modal-content { background-color: #111; color: white; border: 1px solid #333; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; position: relative; animation: slideDown 0.3s ease-out; }
-        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal-logo { font-size: 20px; font-weight: bold; margin-bottom: 15px; display: inline-block; padding: 5px 15px; background: #fff; color: #000; letter-spacing: 2px; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 25px; }
-        .btn-confirm { background: #e74c3c; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; }
-        .btn-close { background: #555; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
     
-    <!-- Navbar -->
-    <div class="header" style="background-color: #111; padding: 10px;">
+    <div class="header" style="background-color: #111; padding:10px;">
         <nav class="navbar">
             <a href="index.html">TRANG CHỦ</a>
-            <a href="history.html" class="active" style="color: #f39c12;">LỊCH SỬ</a>
+            <a href="history.html" class="active">LỊCH SỬ</a>
             <a href="booking.html" class="highlight">ĐẶT LỊCH</a>
         </nav>
     </div>
 
-    <div class="page-header">
-        <h1>Lịch Sử Đặt Bàn</h1>
-        <p>Quản lý các cuộc hẹn của <b id="user-display-name">...</b></p>
-    </div>
+    <div class="page-header"><h1>Lịch Sử Đặt Bàn</h1></div>
 
     <div class="container">
         <div class="table-responsive">
             <table id="history-table">
-                <thead>
-                    <tr>
-                        <th>#ID</th>
-                        <th>Khách & Chi nhánh</th>
-                        <th>Chi tiết bàn</th>
-                        <th>Ngày & Giờ</th>
-                        <th>Thanh toán</th>
-                        <th>Tổng tiền</th>
-                        <th>Trạng thái</th>
-                        <th>Hành động</th>
-                    </tr>
-                </thead>
-                <tbody id="history-body">
-                    <tr><td colspan="8" style="text-align:center; padding: 30px; color: #666;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu...</td></tr>
-                </tbody>
+                <thead><tr><th>#ID</th><th>Chi Tiết Bàn</th><th>Ngày & Giờ</th><th>Tổng Tiền</th><th>Hình Thức</th><th>Trạng Thái</th><th>Hủy</th></tr></thead>
+                <tbody id="history-body"><tr><td colspan="7" style="text-align:center">Loading...</td></tr></tbody>
             </table>
         </div>
-        <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a>
+        <a href="index.html" class="back-btn">← Quay lại trang chủ</a>
     </div>
 
-    <!-- MODAL HỦY -->
-    <div id="confirm-modal" class="custom-modal">
-        <div class="modal-content">
-            <div class="modal-logo">71 BILLIARDS</div>
-            <h3 style="margin-bottom: 10px;">Xác nhận hủy đặt bàn?</h3>
-            <p style="color: #bbb; font-size: 14px;">Hành động này không thể hoàn tác.</p>
-            <div class="btn-group">
-                <button class="btn-close" onclick="closeConfirmModal()">Giữ lại</button>
-                <button class="btn-confirm" onclick="executeCancel()">Đồng ý Hủy</button>
+    <!-- MODAL CONFIRM -->
+    <div id="cfm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center;">
+        <div style="background:#222; padding:30px; border-radius:10px; text-align:center; border:1px solid #444;">
+            <h3>Xác nhận hủy?</h3>
+            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+                <button onclick="document.getElementById('cfm-modal').style.display='none'" style="padding:10px 20px;">Không</button>
+                <button onclick="doCancel()" style="padding:10px 20px; background:#e74c3c; color:white; border:none;">Hủy Ngay</button>
             </div>
         </div>
     </div>
@@ -112,129 +68,79 @@
 
     <script>
         const API_URL = '/api';
-        let deleteIdTemp = null;
-
+        let cancelId = null;
+        
         // CHECK LOGIN
-        const userStr = localStorage.getItem('user_info') || localStorage.getItem('user');
-        if (!userStr) {
-            alert("Vui lòng đăng nhập để xem lịch sử!");
-            window.location.href = 'login.html';
-        }
+        const uStr = localStorage.getItem('user_info') || localStorage.getItem('user');
+        if (!uStr) window.location.href = 'login.html';
+        const user = JSON.parse(uStr);
 
-        const currentUser = JSON.parse(userStr);
-        const userId = currentUser.id;
-        document.getElementById('user-display-name').innerText = currentUser.username || currentUser.full_name;
+        function formatMoney(n) { return new Intl.NumberFormat('vi-VN', {style:'currency', currency:'VND'}).format(n||0); }
 
-        // --- CÁC HÀM FORMAT GIỜ VIỆT NAM (CHUẨN) ---
-        function formatTime(dateString) {
-            // Thêm timeZone: Asia/Ho_Chi_Minh
-            return new Date(dateString).toLocaleTimeString('vi-VN', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                timeZone: 'Asia/Ho_Chi_Minh'
-            });
-        }
-
-        function formatDate(dateString) {
-            return new Date(dateString).toLocaleDateString('vi-VN', {
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                timeZone: 'Asia/Ho_Chi_Minh'
-            });
-        }
-
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
-        }
-
-        // --- GỌI API ---
-        fetch(`${API_URL}/history/${userId}`)
+        fetch(`${API_URL}/history/${user.id}`)
             .then(res => res.json())
             .then(data => {
                 const tbody = document.getElementById('history-body');
-                tbody.innerHTML = ''; 
-
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px;">Bạn chưa có lịch sử đặt bàn nào.</td></tr>`;
-                    return;
-                }
+                tbody.innerHTML = '';
+                if(data.length === 0) { tbody.innerHTML='<tr><td colspan="7" style="text-align:center">Chưa có lịch sử.</td></tr>'; return; }
 
                 data.forEach(item => {
                     const start = new Date(item.start_time);
                     const now = new Date();
-                    const diffMs = start - now;
-                    const minutesLeft = Math.floor(diffMs / 1000 / 60);
+                    const minLeft = (start - now)/60000;
 
-                    // Logic Status
-                    let statusBadge = '', actionButton = '';
-                    if (item.status === 'confirmed') {
-                        statusBadge = `<span class="status-badge st-confirmed">Đã đặt</span>`;
-                        
-                        if (minutesLeft >= 20) {
-                            actionButton = `<button class="btn-cancel" onclick="openConfirmModal(${item.id})">Hủy đơn</button>`;
-                        } else if (minutesLeft > 0) {
-                            actionButton = `<button class="btn-cancel disabled" title="Phải hủy trước 20 phút">Quá giờ hủy</button>`;
-                        } else {
-                            // Quá giờ coi như đã chơi xong hoặc đang chơi
-                            statusBadge = `<span class="status-badge st-completed">Đã/Đang chơi</span>`;
-                            actionButton = `<span style="color:#555">-</span>`;
-                        }
-                    } else if (item.status === 'cancelled') {
-                        statusBadge = `<span class="status-badge st-cancelled">Đã hủy</span>`;
-                        actionButton = `<span style="color:#555">-</span>`;
+                    let stHtml='', btnHtml='';
+                    if(item.status==='confirmed'){
+                        stHtml=`<span class="st-badge st-cf">Đã Đặt</span>`;
+                        if(minLeft >= 20) btnHtml=`<button class="btn-cancel" onclick="askCancel(${item.id})">Hủy đơn</button>`;
+                        else if(minLeft > 0) btnHtml=`<small style="color:#666">Quá giờ hủy</small>`;
+                        else stHtml=`<span class="st-badge st-cp">Hoàn tất</span>`; // Quá giờ tự coi như xong
+                    } else if(item.status==='cancelled'){
+                        stHtml=`<span class="st-badge st-cc">Đã Hủy</span>`;
+                        btnHtml='-';
                     } else {
-                        statusBadge = `<span class="status-badge st-completed">Hoàn thành</span>`;
-                        actionButton = `<span style="color:#555">-</span>`;
+                        stHtml=`<span class="st-badge st-cp">Hoàn Tất</span>`;
+                        btnHtml='-';
                     }
 
-                    const customerDisplay = item.customer_name || currentUser.username;
-                    const branchInfo = `CN ${item.branch_id || '1'}`;
+                    // --- [MỚI] HIỂN THỊ PHƯƠNG THỨC THANH TOÁN ---
+                    // Cần Server trả về payment_method. Nếu chưa, mặc định Tiền mặt
+                    // (Bạn cần update server.js chỗ API history SELECT * thay vì SELECT ... cụ thể để lấy được cột mới)
+                    // Hoặc update API SELECT: SELECT b.*, ...
+                    const pMethod = item.payment_method || 'Tiền mặt'; 
+                    let payTag = pMethod.includes('Online') || pMethod.includes('Chuyển') 
+                        ? `<span class="pay-tag pay-on">Online</span>` 
+                        : `<span class="pay-tag pay-cs">Tiền mặt</span>`;
 
-                    // XỬ LÝ THANH TOÁN HIỂN THỊ
-                    let payMethodHtml = '';
-                    const method = item.payment_method || 'Tiền mặt'; // Nếu null coi là tiền mặt
-                    
-                    if (method === 'Tiền mặt' || method.includes('Tiền mặt')) {
-                        payMethodHtml = `<span class="pay-tag pay-cash"><i class="fa-solid fa-money-bill"></i> Tiền mặt</span>`;
-                    } else {
-                        payMethodHtml = `<span class="pay-tag pay-online"><i class="fa-solid fa-credit-card"></i> Online</span>`;
-                    }
+                    const date = start.toLocaleDateString('vi-VN');
+                    const time = start.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}) + " - " + 
+                                 new Date(item.end_time).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
 
                     tbody.innerHTML += `
                         <tr>
                             <td>#${item.id}</td>
-                            <td><b>${customerDisplay}</b><br><span style="font-size:11px;color:#888;">${branchInfo}</span></td>
-                            <td style="color:#f1c40f; font-weight:500">${item.table_name}</td>
-                            <td>
-                                <b>${formatTime(item.start_time)} - ${formatTime(item.end_time)}</b><br>
-                                <span style="font-size:11px; color:#aaa">${formatDate(item.start_time)}</span>
-                            </td>
-                            <td>${payMethodHtml}</td>
-                            <td style="font-weight:bold; color:#4ade80;">${formatCurrency(item.total_price)}</td>
-                            <td>${statusBadge}</td>
-                            <td style="text-align:center;">${actionButton}</td>
+                            <td style="font-weight:bold; color:#facc15">${item.table_name}</td>
+                            <td>${time}<br><small style="color:#777">${date}</small></td>
+                            <td style="font-weight:bold">${formatMoney(item.total_price)}</td>
+                            <td>${payTag}</td>
+                            <td>${stHtml}</td>
+                            <td>${btnHtml}</td>
                         </tr>
                     `;
                 });
-            })
-            .catch(err => console.error(err));
+            });
 
-        // --- HỦY BÀN ---
-        function openConfirmModal(id) { deleteIdTemp = id; document.getElementById('confirm-modal').style.display = 'flex'; }
-        function closeConfirmModal() { deleteIdTemp = null; document.getElementById('confirm-modal').style.display = 'none'; }
-
-        async function executeCancel() {
-            if (!deleteIdTemp) return;
+        function askCancel(id) { cancelId = id; document.getElementById('cfm-modal').style.display='flex'; }
+        
+        async function doCancel() {
+            if(!cancelId) return;
             try {
-                const res = await fetch(`${API_URL}/booking/cancel`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ booking_id: deleteIdTemp })
+                await fetch(`${API_URL}/booking/cancel`, {
+                    method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({booking_id: cancelId})
                 });
-                const result = await res.json();
-                closeConfirmModal();
-                if (res.ok) { alert("✅ Đã hủy thành công!"); location.reload(); }
-                else { alert("❌ Lỗi: " + result.message); }
-            } catch (err) { alert("Lỗi server"); }
+                location.reload();
+            } catch(e){alert("Lỗi mạng");}
         }
     </script>
 </body>

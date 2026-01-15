@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* CSS GIAO DIỆN FORM */
+        /* CSS FORM */
         .booking-container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1); color: #333; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
@@ -16,13 +16,13 @@
         .error-msg { color: red; font-size: 13px; margin-top: 5px; display: none; }
         h1 { text-align: center; color: #222; margin-bottom: 20px; }
 
-        /* KHU VỰC HIỂN THỊ QR / THÔNG BÁO */
+        /* QR CODE */
         #payment-info-box { margin-top: 15px; text-align: center; transition: 0.3s; background: #f8f9fa; padding: 10px; border-radius: 8px; }
         .qr-img { width: 100%; max-width: 280px; border: 2px solid #3498db; border-radius: 8px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .bank-info { font-size: 13px; color: #555; margin-bottom: 5px; font-weight: bold; }
         .momo-alert { background: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; border: 1px solid #ef5350; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
 
-        /* CSS MODAL (Bảng thông báo) */
+        /* MODAL */
         .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
         .modal-content { background-color: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; animation: slideDown 0.3s ease-out; color: #333 !important; }
         @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -38,10 +38,13 @@
         .btn-login-now { background: #3498db; width: 48%; } .btn-close-modal { background: #95a5a6; width: 48%; }
         .btn-group { display: flex; justify-content: space-between; margin-top: 20px; }
 
+        /* Hóa đơn */
         .bill-info { text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px dashed #bbb; margin-top: 15px; }
         .bill-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
         .bill-row strong { color: #666 !important; font-weight: normal; }
         .bill-row span { color: #000 !important; font-weight: bold; }
+        .suggestion-box { background-color: #fff3cd; color: #856404 !important; border: 1px solid #ffeeba; padding: 10px; margin-top: 15px; text-align: left; font-size: 14px; border-radius: 5px; }
+        .suggestion-box strong { color: #856404 !important; }
     </style>
 </head>
 <body>
@@ -54,13 +57,13 @@
     <div class="booking-container">
         <h1>ĐẶT BÀN ONLINE</h1>
         <form id="booking-form">
-            <!-- Tên -->
+            
             <div class="form-group">
                 <label>Họ tên người đặt:</label>
                 <input type="text" id="customer-name" placeholder="VD: Anh Tài, Nhóm Bạn..." required>
             </div>
             
-            <!-- Thành viên -->
+            <!-- Thành viên VIP -->
             <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; border: 1px dashed #3498db; margin-bottom: 20px;">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                     <input type="checkbox" id="check-member" style="width: auto; margin: 0;" onchange="toggleMemberInput()">
@@ -75,7 +78,6 @@
                 </div>
             </div>
 
-            <!-- Các ô chọn khác -->
             <div class="form-group">
                 <label>Chọn Chi Nhánh:</label>
                 <select id="branch-select" onchange="loadTables()">
@@ -84,14 +86,24 @@
                 </select>
             </div>
 
+            <!-- ĐÃ XÓA DANH SÁCH BÀN CỨNG TẠI ĐÂY -->
             <div class="form-group">
                 <label>Chọn Bàn:</label>
                 <select id="table-select" required onchange="updateQR()">
-                    <option value="">-- Vui lòng chọn bàn --</option>
+                    <option value="">-- Đang tải danh sách bàn... --</option>
                 </select>
             </div>
 
-            <!-- THỜI GIAN (Có sự kiện onchange để cập nhật tiền trong QR) -->
+            <div class="form-group">
+                <label>Hình thức thanh toán:</label>
+                <select id="payment-method" onchange="updateQR()">
+                    <option value="Tiền mặt">Tiền mặt tại quán (Trả sau)</option>
+                    <option value="Chuyển khoản (QR)">Chuyển khoản ngân hàng (QR)</option>
+                    <option value="Ví MoMo">Ví MoMo</option>
+                </select>
+                <div id="payment-info-box"></div>
+            </div>
+
             <div class="form-group">
                 <label>Thời gian bắt đầu:</label>
                 <input type="datetime-local" id="start-time" required onchange="updateQR()">
@@ -103,24 +115,11 @@
                 <div class="error-msg" id="end-error"></div>
             </div>
 
-            <!-- HÌNH THỨC THANH TOÁN -->
-            <div class="form-group">
-                <label>Hình thức thanh toán:</label>
-                <select id="payment-method" onchange="updateQR()">
-                    <option value="Tiền mặt">Tiền mặt tại quán (Trả sau)</option>
-                    <option value="Chuyển khoản (QR)">Chuyển khoản ngân hàng (QR)</option>
-                    <option value="Ví MoMo">Ví MoMo</option>
-                </select>
-                <!-- VÙNG HIỂN THỊ QR HOẶC THÔNG BÁO LỖI -->
-                <div id="payment-info-box"></div>
-            </div>
-
             <button type="submit" class="btn" style="width: 100%;">XÁC NHẬN ĐẶT</button>
         </form>
     </div>
 
-    <!-- CÁC MODAL THÔNG BÁO -->
-    <!-- 1. LOGIN REQUIRED -->
+    <!-- MODAL 1: Login -->
     <div id="login-modal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-logo">71 BILLIARDS</div>
@@ -133,12 +132,13 @@
         </div>
     </div>
 
-    <!-- 2. THÀNH CÔNG -->
+    <!-- MODAL 2: Thành Công -->
     <div id="success-modal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-logo">71 BILLIARDS</div>
             <div class="modal-title" style="color:#28a745 !important;">ĐẶT BÀN THÀNH CÔNG!</div>
             <p>Đơn đặt bàn của bạn đã được xác nhận.</p>
+
             <div class="bill-info">
                 <div class="bill-row"><strong>Khách hàng:</strong> <span id="bill-name">...</span></div>
                 <div class="bill-row"><strong>Chi nhánh:</strong> <span id="bill-branch">...</span></div>
@@ -156,7 +156,7 @@
         </div>
     </div>
 
-    <!-- 3. BÁO LỖI -->
+    <!-- MODAL 3: Báo Lỗi -->
     <div id="error-modal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-logo">71 BILLIARDS</div>
@@ -170,38 +170,69 @@
         const API_URL = '/api';
         let currentDiscount = 0;
         
-        // --- 1. THÔNG TIN NGÂN HÀNG (CẬP NHẬT Ở ĐÂY) ---
-        // 'MB' là MB Bank. Nếu là bank khác (VCB, ACB), sửa lại chữ 'MB' tương ứng.
+        // --- THÔNG TIN NGÂN HÀNG ---
         const BANK_ID = 'MB'; 
         const ACCOUNT_NO = '07118042005';
         const ACCOUNT_NAME = 'PHAM HOAI AN'; 
-        // ---------------------------------------------
 
         const urlParams = new URLSearchParams(window.location.search);
+        
+        // Auto select branch from URL
         const branchParam = urlParams.get('branch'); 
         if(branchParam) document.getElementById('branch-select').value = branchParam;
 
+        // --- HÀM TẢI DANH SÁCH BÀN (FIX: XÓA HARDCODE) ---
         function loadTables() {
             const branchId = document.getElementById('branch-select').value;
             const tableSelect = document.getElementById('table-select');
-            tableSelect.innerHTML = '<option value="">Đang tải...</option>';
+            
+            // Hiện loading trong lúc chờ
+            tableSelect.innerHTML = '<option value="">⏳ Đang tải dữ liệu bàn...</option>';
+            tableSelect.disabled = true;
 
             fetch(`${API_URL}/tables?branch_id=${branchId}`)
                 .then(res => res.json())
                 .then(data => {
+                    // Reset
                     tableSelect.innerHTML = '<option value="">-- Vui lòng chọn bàn --</option>';
-                    if(data.length === 0) { tableSelect.innerHTML += '<option disabled>Hết bàn</option>'; return; }
+                    tableSelect.disabled = false;
+
+                    if(data.length === 0) { 
+                        tableSelect.innerHTML += '<option disabled>Chi nhánh này chưa có bàn</option>'; 
+                        return; 
+                    }
+                    
+                    // Render Options
                     data.forEach(table => {
                         const priceFormatted = new Intl.NumberFormat('vi-VN').format(table.price_per_hour);
-                        tableSelect.innerHTML += `<option value="${table.id}" data-price="${table.price_per_hour}">${table.name} (${table.type}) - ${priceFormatted} VNĐ/h</option>`;
+                        // Đánh dấu bàn đang chơi (Optional: Server trả về is_busy)
+                        const busyMark = table.is_busy > 0 ? " (🔴 ĐANG CHƠI)" : "";
+                        
+                        const option = document.createElement('option');
+                        option.value = table.id;
+                        // Lưu giá tiền vào attribute để tính toán
+                        option.setAttribute('data-price', table.price_per_hour);
+                        option.innerText = `${table.name} (${table.type}) - ${priceFormatted} VNĐ/h${busyMark}`;
+                        
+                        tableSelect.appendChild(option);
                     });
+
+                    // Auto select from URL
                     const preSelectedTable = urlParams.get('table_id');
-                    if(preSelectedTable && data.some(t => t.id == preSelectedTable)) tableSelect.value = preSelectedTable;
+                    if(preSelectedTable && data.some(t => t.id == preSelectedTable)) {
+                        tableSelect.value = preSelectedTable;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    tableSelect.innerHTML = '<option value="">❌ Lỗi kết nối Server</option>';
                 });
         }
+        
+        // Chạy lần đầu
         loadTables();
 
-        // Check VIP
+        // --- VIP CHECK ---
         function toggleMemberInput() {
             const isChecked = document.getElementById('check-member').checked;
             document.getElementById('member-check-box').style.display = isChecked ? 'block' : 'none';
@@ -227,11 +258,10 @@
             } catch(err) { showErrorModal("Lỗi server kiểm tra VIP"); }
         }
 
-        // --- HÀM CẬP NHẬT MÃ QR ---
+        // --- UPDATE QR CODE ---
         function updateQR() {
             const method = document.getElementById('payment-method').value;
             const box = document.getElementById('payment-info-box');
-            
             box.innerHTML = ''; 
 
             if (method.includes('Ví MoMo')) {
@@ -244,12 +274,9 @@
                 const end = new Date(document.getElementById('end-time').value);
                 const tableSelect = document.getElementById('table-select');
                 
-                // Tiền tố API (URL để tạo ảnh)
-                // acqId: 970422 (MB Bank), accountNo: 07118042005
-                const template = "compact2"; // Giao diện QR
+                const template = "compact2";
                 
                 if(isNaN(start) || isNaN(end) || tableSelect.value === "") {
-                    // QR 0 Đồng (Hiện khi chưa chọn giờ)
                     const qrUrlDefault = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${template}.png?amount=0&addInfo=DAT COC BIDA&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
                     box.innerHTML = `
                         <p class="bank-info">${ACCOUNT_NAME}<br>${BANK_ID} Bank - ${ACCOUNT_NO}</p>
@@ -259,13 +286,15 @@
                 }
 
                 // Tính tiền
-                const pricePerHour = parseFloat(tableSelect.options[tableSelect.selectedIndex].getAttribute('data-price')) || 0;
+                const selectedOpt = tableSelect.options[tableSelect.selectedIndex];
+                // Lấy giá từ attribute data-price
+                const pricePerHour = parseFloat(selectedOpt.getAttribute('data-price')) || 0;
+                
                 let finalPrice = Math.ceil(((end - start) / (1000 * 60 * 60)) * pricePerHour);
                 if(currentDiscount > 0) finalPrice = finalPrice * 0.9;
                 
                 if (finalPrice <= 0) return;
 
-                // QR Động (Có giá tiền)
                 const qrUrlReal = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${template}.png?amount=${finalPrice}&addInfo=DAT COC BIDA&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
                 
                 box.innerHTML = `
@@ -303,6 +332,7 @@
             if (end <= start) { showErrorModal("Giờ kết thúc phải sau giờ bắt đầu."); return; }
 
             const selectedOption = tableSelect.options[tableSelect.selectedIndex];
+            // Lấy giá từ data-price thay vì value (đã fix)
             const pricePerHour = parseFloat(selectedOption.getAttribute('data-price')) || 0;
             const durationHours = (end - start) / (1000 * 60 * 60);
             
@@ -347,7 +377,7 @@
             }
         });
 
-        // --- SUCCESS MODAL DISPLAY ---
+        // --- UTILS ---
         function showSuccessModal(name, start, end, hours, total) {
             const branchText = document.getElementById('branch-select').selectedOptions[0].text;
             const tableName = document.getElementById('table-select').selectedOptions[0].text.split(' - ')[0];
@@ -374,15 +404,9 @@
             document.getElementById('success-modal').style.display = 'flex';
         }
 
-        // --- UTILS ---
         function redirectToHistory() { window.location.href = "history.html"; }
-        
-        function showErrorModal(htmlMsg) {
-            document.getElementById('error-message-text').innerHTML = htmlMsg;
-            document.getElementById('error-modal').style.display = 'flex';
-        }
+        function showErrorModal(htmlMsg) { document.getElementById('error-message-text').innerHTML = htmlMsg; document.getElementById('error-modal').style.display = 'flex'; }
         function closeErrorModal() { document.getElementById('error-modal').style.display = 'none'; }
-
         function showLoginModal() { document.getElementById('login-modal').style.display = 'flex'; }
         function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; }
     </script>

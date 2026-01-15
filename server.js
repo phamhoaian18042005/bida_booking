@@ -34,6 +34,49 @@ setInterval(() => {
 // --- 2. CÁC API ---
 // ============================================
 
+// ============================================
+// API 1: LẤY DANH SÁCH BÀN (TỪ DATABASE THẬT)
+// Chức năng: 
+// 1. Nhận tham số ?branch_id=... từ URL
+// 2. Tính toán xem bàn nào đang bận (is_busy)
+// ============================================
+app.get('/api/tables', (req, res) => {
+    // Lấy ID chi nhánh từ URL (ví dụ: /api/tables?branch_id=2)
+    const branchId = req.query.branch_id; 
+
+    // Câu lệnh SQL: Lấy bàn và kiểm tra trạng thái
+    // Logic is_busy: Nếu có đơn 'confirmed' mà thời gian HIỆN TẠI nằm trong khoảng chơi -> Là Bận (1)
+    let sql = `
+        SELECT t.*, 
+        (
+            SELECT COUNT(*) FROM bookings b 
+            WHERE b.table_id = t.id 
+            AND b.status = 'confirmed' 
+            AND NOW() BETWEEN b.start_time AND b.end_time
+        ) as is_busy
+        FROM tables t 
+        WHERE t.is_active = 1
+    `;
+
+    // Nếu có yêu cầu lọc chi nhánh thì thêm điều kiện WHERE
+    const params = [];
+    if (branchId) {
+        sql += " AND t.branch_id = ?";
+        params.push(branchId);
+    }
+
+    // Sắp xếp: Bàn VIP lên trước, rồi tới tên bàn
+    sql += " ORDER BY t.name LIKE '%VIP%' DESC, t.name ASC";
+    
+    db.query(sql, params, (err, results) => {
+        if (err) {
+            console.error("Lỗi lấy danh sách bàn:", err);
+            return res.status(500).json({ message: "Lỗi Server" });
+        }
+        res.json(results);
+    });
+});
+
 // Auth: Login
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;

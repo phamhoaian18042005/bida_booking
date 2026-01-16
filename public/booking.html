@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* CSS FORM */
+        /* CSS GIAO DIỆN FORM */
         .booking-container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1); color: #333; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
@@ -16,15 +16,15 @@
         .error-msg { color: red; font-size: 13px; margin-top: 5px; display: none; }
         h1 { text-align: center; color: #222; margin-bottom: 20px; }
 
-        /* VÙNG QR VÀ THÔNG BÁO MOMO */
-        #payment-info-box { margin-top: 15px; text-align: center; transition: 0.3s; background: #fff3e0; padding: 0; border-radius: 8px; overflow: hidden; }
-        .qr-content { padding: 15px; border: 1px solid #ffcc80; }
-        .qr-img { width: 100%; max-width: 280px; border: 2px solid #3498db; border-radius: 8px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* KHU VỰC HIỂN THỊ QR / THÔNG BÁO */
+        #payment-info-box { margin-top: 15px; text-align: center; transition: 0.3s; background: #f8f9fa; padding: 10px; border-radius: 8px; min-height: 0; }
+        .qr-img { width: 100%; max-width: 250px; border: 2px solid #3498db; border-radius: 8px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .bank-info { font-size: 13px; color: #555; margin-bottom: 5px; font-weight: bold; }
         
-        .momo-alert { background: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border: 1px solid #ef5350; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 5px; }
+        .momo-alert { background: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border: 1px solid #ef5350; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .qr-placeholder { color: #e67e22; font-size: 13px; margin-top: 5px; font-style: italic; }
 
-        /* MODAL */
+        /* CSS MODAL (Bảng thông báo) */
         .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
         .modal-content { background-color: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; animation: slideDown 0.3s ease-out; color: #333 !important; }
         @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -34,6 +34,7 @@
         .btn-modal { border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; margin-top: 20px; color: white !important; }
         .btn-modal:hover { opacity: 0.9; }
 
+        /* MÀU RIÊNG CHO TỪNG MODAL */
         #success-modal .modal-content { border-top: 5px solid #28a745; } #success-modal .btn-modal { background: #28a745; }
         #error-modal .modal-content { border-top: 5px solid #e74c3c; } #error-modal .modal-logo { background: #e74c3c; } #error-modal .btn-modal { background: #333; }
         #login-modal .modal-content { border-top: 5px solid #3498db; } #login-modal .modal-logo { background: #3498db; }
@@ -90,12 +91,13 @@
 
             <div class="form-group">
                 <label>Chọn Bàn:</label>
+                <!-- DYNAMIC: ĐÃ XÓA HARDCODE -->
                 <select id="table-select" required onchange="updateQR()">
                     <option value="">-- Đang tải danh sách bàn... --</option>
                 </select>
             </div>
 
-            <!-- 1. THỜI GIAN ĐƯỢC ĐƯA LÊN TRƯỚC (Theo yêu cầu) -->
+            <!-- 1. THỜI GIAN (LÊN TRÊN) -->
             <div class="form-group">
                 <label>Thời gian bắt đầu:</label>
                 <input type="datetime-local" id="start-time" required onchange="updateQR()">
@@ -107,7 +109,7 @@
                 <div class="error-msg" id="end-error"></div>
             </div>
 
-            <!-- 2. HÌNH THỨC THANH TOÁN (ĐƯA XUỐNG DƯỚI) -->
+            <!-- 2. HÌNH THỨC THANH TOÁN (XUỐNG DƯỚI) -->
             <div class="form-group" style="background: #eefcf1; padding: 10px; border-radius: 5px; border: 1px solid #c8e6c9;">
                 <label>Hình thức thanh toán:</label>
                 <select id="payment-method" onchange="updateQR()">
@@ -115,7 +117,7 @@
                     <option value="Chuyển khoản (QR)">Chuyển khoản ngân hàng (QR)</option>
                     <option value="Ví MoMo">Ví MoMo</option>
                 </select>
-                <!-- KẾT QUẢ QR SẼ HIỆN Ở ĐÂY -->
+                <!-- VÙNG HIỂN THỊ QR / THÔNG BÁO LỖI -->
                 <div id="payment-info-box"></div>
             </div>
 
@@ -123,7 +125,7 @@
         </form>
     </div>
 
-    <!-- MODAL ĐĂNG NHẬP -->
+    <!-- MODAL 1: Login -->
     <div id="login-modal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-logo">71 BILLIARDS</div>
@@ -136,7 +138,7 @@
         </div>
     </div>
 
-    <!-- MODAL THÀNH CÔNG -->
+    <!-- MODAL 2: Thành Công -->
     <div id="success-modal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-logo">71 BILLIARDS</div>
@@ -159,7 +161,7 @@
         </div>
     </div>
 
-    <!-- MODAL BÁO LỖI -->
+    <!-- MODAL 3: Báo Lỗi -->
     <div id="error-modal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-logo">71 BILLIARDS</div>
@@ -173,7 +175,7 @@
         const API_URL = '/api';
         let currentDiscount = 0;
         
-        // --- CẤU HÌNH NGÂN HÀNG ---
+        // --- THÔNG TIN BANK (SỬA LẠI ĐÚNG SỐ CỦA BẠN) ---
         const BANK_ID = 'MB'; 
         const ACCOUNT_NO = '07118042005';
         const ACCOUNT_NAME = 'PHAM HOAI AN'; 
@@ -188,7 +190,7 @@
         function loadTables() {
             const branchId = document.getElementById('branch-select').value;
             const tableSelect = document.getElementById('table-select');
-            tableSelect.innerHTML = '<option value="">⏳ Đang tải...</option>';
+            tableSelect.innerHTML = '<option value="">⏳ Đang tải dữ liệu...</option>';
             tableSelect.disabled = true;
 
             fetch(`${API_URL}/tables?branch_id=${branchId}`)
@@ -201,7 +203,7 @@
                     
                     data.forEach(table => {
                         const priceFormatted = new Intl.NumberFormat('vi-VN').format(table.price_per_hour);
-                        // Thêm cảnh báo nếu bàn đang bận (server trả is_busy = 1)
+                        // Cảnh báo bàn bận
                         const busyMark = table.is_busy > 0 ? " (🔴 Đang bận)" : "";
                         
                         const option = document.createElement('option');
@@ -211,14 +213,13 @@
                         
                         tableSelect.appendChild(option);
                     });
-                    
                     const preSelectedTable = urlParams.get('table_id');
                     if(preSelectedTable && data.some(t => t.id == preSelectedTable)) tableSelect.value = preSelectedTable;
                     
-                    // Cập nhật lại QR khi load xong (trường hợp load lại trang)
+                    // Gọi updateQR để tính lại tiền/ảnh QR nếu đã có thông tin
                     updateQR();
                 })
-                .catch(() => tableSelect.innerHTML = '<option value="">Lỗi kết nối</option>');
+                .catch(err => tableSelect.innerHTML = '<option value="">Lỗi kết nối</option>');
         }
         loadTables();
 
@@ -240,55 +241,38 @@
                 });
                 const data = await res.json();
                 if (data.isVip) {
-                    currentDiscount = 10; 
-                    msgBox.innerHTML = `<span style="color:green">✅ ${data.message}</span>`;
-                    updateQR();
+                    currentDiscount = 10; msgBox.innerHTML = `<span style="color:green">✅ ${data.message}</span>`;
+                    updateQR(); // Tính lại QR khi có giảm giá
                 } else {
-                    currentDiscount = 0; 
-                    msgBox.innerHTML = `<span style="color:orange">⚠️ ${data.message}</span>`;
+                    currentDiscount = 0; msgBox.innerHTML = `<span style="color:orange">⚠️ ${data.message}</span>`;
                 }
             } catch(err) { showErrorModal("Lỗi server kiểm tra VIP"); }
         }
 
-        // --- HÀM CẬP NHẬT MÃ QR & MOMO ---
+        // --- CẬP NHẬT QR / MOMO ---
         function updateQR() {
             const method = document.getElementById('payment-method').value;
             const box = document.getElementById('payment-info-box');
             
             box.innerHTML = ''; 
 
-            // 1. Kiểm tra MoMo trước
             if (method.includes('MoMo')) {
-                box.innerHTML = `<div class="momo-alert"><i class="fa-solid fa-triangle-exclamation"></i> Ví MoMo đang bảo trì. Vui lòng chọn cách khác.</div>`;
+                box.innerHTML = `<div class="momo-alert"><i class="fa-solid fa-triangle-exclamation"></i> Ví MoMo hiện đang bảo trì.<br>Vui lòng chọn hình thức khác.</div>`;
                 return;
             }
 
-            // 2. Nếu là Tiền mặt thì thôi không hiện gì
-            if (method.includes('Tiền mặt')) {
-                return;
-            }
-
-            // 3. Nếu là Chuyển khoản QR -> Tính toán
             if (method.includes('Chuyển khoản')) {
                 const start = new Date(document.getElementById('start-time').value);
                 const end = new Date(document.getElementById('end-time').value);
                 const tableSelect = document.getElementById('table-select');
                 
-                // Điều kiện để tạo QR: Phải có Bàn + Thời gian hợp lệ
-                let isValid = true;
-                if (!tableSelect.value) isValid = false;
-                if (isNaN(start) || isNaN(end)) isValid = false;
-                if (end <= start) isValid = false;
-
-                // Nếu chưa đủ điều kiện, hiện QR mặc định 0 đồng
-                if (!isValid) {
-                    const qrUrlDefault = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=0&addInfo=DAT COC&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+                // Logic validate cơ bản để hiện placeholder hoặc QR thật
+                if(isNaN(start) || isNaN(end) || tableSelect.value === "" || end <= start) {
+                    const qrUrlDefault = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=0&addInfo=DEMO&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
                     box.innerHTML = `
-                        <div class="qr-content">
-                            <p class="bank-info">Ngân hàng: <b>${BANK_ID}</b><br>STK: <b>${ACCOUNT_NO}</b></p>
-                            <img src="${qrUrlDefault}" class="qr-img" alt="QR Code">
-                            <p style="font-size:12px; margin-top:5px; color:#e67e22;">⚠ Chọn giờ chơi hợp lệ để hiện số tiền.</p>
-                        </div>`;
+                        <p class="bank-info">Ngân hàng: <b>${BANK_ID}</b> - STK: <b>${ACCOUNT_NO}</b></p>
+                        <img src="${qrUrlDefault}" class="qr-img" alt="QR Code">
+                        <div class="qr-placeholder">⚠ Vui lòng chọn Bàn và Giờ chơi hợp lệ để hiện số tiền thanh toán.</div>`;
                     return;
                 }
 
@@ -299,25 +283,25 @@
                 let finalPrice = Math.ceil(((end - start) / (1000 * 60 * 60)) * pricePerHour);
                 if(currentDiscount > 0) finalPrice = finalPrice * 0.9;
                 
-                // Nếu tiền <= 0 cũng không hiện
                 if (finalPrice <= 0) return;
 
+                // Tạo QR
                 const qrUrlReal = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-${TEMPLATE}.png?amount=${finalPrice}&addInfo=THANH TOAN BIDA&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
                 
                 box.innerHTML = `
-                    <div class="qr-content" style="background:#fff;">
-                        <p class="bank-info">${ACCOUNT_NAME}<br>${BANK_ID} Bank - ${ACCOUNT_NO}</p>
+                    <div style="background:#fff; padding:10px; border-radius:8px;">
+                        <p class="bank-info">${ACCOUNT_NAME}<br>${BANK_ID} - ${ACCOUNT_NO}</p>
                         <img src="${qrUrlReal}" class="qr-img" alt="QR Thanh Toán">
-                        <p style="font-size:15px; font-weight:bold; color:#28a745; margin-top:10px;">Quét mã thanh toán: ${new Intl.NumberFormat('vi-VN').format(finalPrice)}đ</p>
+                        <p style="font-size:15px; font-weight:bold; color:#28a745; margin-top:5px;">Quét mã thanh toán: ${new Intl.NumberFormat('vi-VN').format(finalPrice)}đ</p>
                     </div>`;
             }
         }
 
-        // --- SUBMIT FORM ---
+        // --- SUBMIT ---
         document.getElementById('booking-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Check Login
+            // Auth Check
             const userStr = localStorage.getItem('user_info') || localStorage.getItem('user'); 
             if (!userStr) { showLoginModal(); return; }
             const currentUser = JSON.parse(userStr);
@@ -328,35 +312,36 @@
             const endTimeVal = document.getElementById('end-time').value;
             const paymentVal = document.getElementById('payment-method').value; 
             
-            // Validation
+            // Validate Logic
             if(paymentVal.includes('MoMo')) { showErrorModal("Ví MoMo đang bảo trì! Vui lòng chọn QR hoặc Tiền mặt."); return; }
-            if (!nameVal.trim()) { showErrorModal("Vui lòng nhập tên!"); return; }
+            if (!nameVal.trim()) { showErrorModal("Vui lòng nhập tên người đặt!"); return; }
             if (!tableId) { showErrorModal("Vui lòng chọn bàn!"); return; }
 
             const start = new Date(startTimeVal);
             const end = new Date(endTimeVal);
-            
-            // Check thời gian cơ bản
             const now = new Date();
-            const minTime = new Date(now.getTime() + 20 * 60 * 1000); // 20 phút trước
+            const minTime = new Date(now.getTime() + 30 * 60 * 1000); 
 
-            // Lỗi mà bạn gặp ở hình ảnh là do dòng này:
+            // Logic chặn đặt lùi giờ hoặc đặt quá sát
+            // Chú ý: Ở đây chặn 30 phút. Bạn có thể giảm xuống nếu muốn dễ test hơn.
             if (end <= start) { 
-                showErrorModal("Thời gian kết thúc phải SAU thời gian bắt đầu!<br>(Ví dụ: Đặt 19:00 -> 21:00 cùng ngày)"); 
+                showErrorModal("Thời gian kết thúc phải SAU thời gian bắt đầu."); 
                 return; 
             }
             if (start < minTime) {
-                showErrorModal("Vui lòng đặt trước ít nhất 30 phút."); return; 
+                showErrorModal("Vui lòng đặt trước ít nhất 30 phút so với giờ hiện tại."); 
+                return; 
             }
 
-            // Tính tiền lại (để gửi lên server)
-            const sel = document.getElementById('table-select');
-            const price = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0;
-            const duration = (end - start) / 3600000; 
-            let total = Math.ceil(duration * price);
-            if(currentDiscount > 0) total = total * 0.9;
+            const selectedOption = tableSelect.options[tableSelect.selectedIndex];
+            const pricePerHour = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            const durationHours = (end - start) / (1000 * 60 * 60);
+            
+            let finalPrice = Math.ceil(durationHours * pricePerHour);
+            if(currentDiscount > 0) finalPrice = finalPrice * 0.9; 
 
             try {
+                // Call API
                 const response = await fetch(`${API_URL}/booking`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -366,7 +351,7 @@
                         table_id: tableId,
                         start_time: startTimeVal,
                         end_time: endTimeVal,
-                        total_price: total,
+                        total_price: finalPrice,
                         payment_method: paymentVal
                     })
                 });
@@ -374,7 +359,7 @@
                 const result = await response.json();
                 
                 if (response.ok) {
-                    showSuccessModal(nameVal, start, end, duration, total);
+                    showSuccessModal(nameVal, start, end, durationHours, finalPrice);
                 } else {
                     if (response.status === 400) {
                         const suggestionTime = result.suggestion; 
@@ -390,11 +375,11 @@
                 }
             } catch (err) {
                 console.error(err);
-                showErrorModal("Lỗi kết nối Server.");
+                showErrorModal("Không thể kết nối đến máy chủ.");
             }
         });
 
-        // --- CÁC HÀM HIỂN THỊ MODAL ---
+        // --- HELPER FUNCTIONS ---
         function showSuccessModal(name, start, end, hours, total) {
             const branchText = document.getElementById('branch-select').selectedOptions[0].text;
             const tableName = document.getElementById('table-select').selectedOptions[0].text.split(' - ')[0];
@@ -409,12 +394,13 @@
             document.getElementById('bill-payment').innerText = payMethodText + (isPaid ? " (Chờ xác nhận)" : " (Tại quầy)");
             document.getElementById('bill-payment').style.color = isPaid ? "green" : "#d35400";
 
-            // Sửa hiển thị giờ chuẩn Việt Nam (ép timeZone) để khớp lịch sử
+            // Sửa hiển thị giờ chuẩn Việt Nam (ép timeZone)
             const opts = {hour:'2-digit', minute:'2-digit'};
             document.getElementById('bill-start').innerText = start.toLocaleTimeString('vi-VN', opts);
             document.getElementById('bill-end').innerText = end.toLocaleTimeString('vi-VN', opts);
             
-            document.getElementById('bill-duration').innerText = `${Math.floor(hours)}h ${Math.round((hours%1)*60)}p`;
+            const durationTxt = `${Math.floor(hours)}h ${Math.round((hours%1)*60)}p`;
+            document.getElementById('bill-duration').innerText = durationTxt;
             
             document.getElementById('bill-total').innerText = moneyFormatter.format(total);
             if(currentDiscount > 0) document.getElementById('bill-total').innerHTML += " <small style='color:green'>(-10%)</small>";

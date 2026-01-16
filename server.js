@@ -174,6 +174,52 @@ app.get('/api/admin/search', (req, res) => {
     db.query(sql, [`%${keyword}%`], (err, results) => { if(err) return res.status(500).json(err); res.json(results); });
 });
 
+// ===============================================
+// API: NHẬN THÔNG BÁO THANH TOÁN TỪ SEPAY (WEBHOOK)
+// ===============================================
+app.post('/api/payment-webhook', (req, res) => {
+    try {
+        const data = req.body;
+        console.log("SePay Webhook Data:", data);
+
+        // SePay gửi content dạng: "BIDA 45 chuyen tien..."
+        const content = data.content || ""; 
+        const amount = data.transferAmount || 0;
+
+        // Lọc lấy số ID đơn hàng từ nội dung (Tìm số sau chữ BIDA)
+        const match = content.match(/BIDA\s*(\d+)/i);
+        
+        if (match) {
+            const bookingId = match[1];
+
+            // Cập nhật trạng thái thành 'confirmed'
+            const sql = `UPDATE bookings SET status = 'confirmed', payment_method = CONCAT(payment_method, ' (Đã TT)') WHERE id = ?`;
+            
+            db.query(sql, [bookingId], (err, result) => {
+                if (err) console.error("Lỗi update thanh toán:", err);
+                else console.log(`✅ Đã kích hoạt đơn hàng #${bookingId}`);
+            });
+        }
+
+        // API phản hồi lại cho SePay biết đã nhận tin thành công
+        res.json({ success: true });
+    } catch (e) {
+        console.error("Lỗi xử lý webhook:", e);
+        res.status(500).json({ error: "Server Error" });
+    }
+});
+
+// ===============================================
+// API: CLIENT CHECK TRẠNG THÁI (FE hỏi liên tục xem đơn xong chưa)
+// ===============================================
+app.get('/api/booking/status/:id', (req, res) => {
+    const sql = "SELECT status FROM bookings WHERE id = ?";
+    db.query(sql, [req.params.id], (err, results) => {
+        if(err || results.length === 0) return res.json({ status: 'pending' });
+        res.json({ status: results[0].status });
+    });
+});
+
 // Route trang chủ
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));

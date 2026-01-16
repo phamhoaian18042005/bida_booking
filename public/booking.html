@@ -8,30 +8,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* CSS FORM GỌN GÀNG */
+        /* CSS GIAO DIỆN FORM */
         .booking-container { max-width: 500px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.1); color: #333; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; color: #333; }
+        .error-msg { color: red; font-size: 13px; margin-top: 5px; display: none; }
+        h1 { text-align: center; color: #222; margin-bottom: 20px; }
+
+        /* KHU VỰC HIỂN THỊ QR / THÔNG BÁO */
+        #payment-info-box { margin-top: 15px; text-align: center; transition: 0.3s; background: #f8f9fa; padding: 10px; border-radius: 8px; }
+        .qr-img { width: 100%; max-width: 250px; border: 2px solid #3498db; border-radius: 8px; margin-top: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .bank-info { font-size: 13px; color: #555; margin-bottom: 5px; font-weight: bold; }
         
-        /* CSS CHO MODAL THANH TOÁN (QR CODE) */
-        .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); align-items: center; justify-content: center; }
-        .modal-content { background-color: white; padding: 25px; border-radius: 12px; width: 95%; max-width: 420px; text-align: center; position: relative; animation: slideDown 0.3s ease-out; }
+        /* Cảnh báo Momo */
+        .momo-alert { background: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; border: 1px solid #ef5350; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+        /* CSS MODAL (Bảng thông báo) */
+        .custom-modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
+        .modal-content { background-color: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; animation: slideDown 0.3s ease-out; color: #333 !important; }
         @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        .modal-logo { font-size: 24px; font-weight: bold; margin-bottom: 15px; display: inline-block; padding: 5px 15px; background: black; color: white; border-radius: 4px; }
+        .modal-logo { font-size: 24px; font-weight: bold; margin-bottom: 15px; display: inline-block; padding: 8px 20px; background: black; color: white !important; border-radius: 4px; }
+        .modal-title { font-size: 18px; margin-bottom: 15px; font-weight: bold; color: #222 !important; text-transform: uppercase; }
+        .btn-modal { border: none; padding: 12px 30px; border-radius: 5px; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; margin-top: 20px; color: white !important; }
+        .btn-modal:hover { opacity: 0.9; }
+
+        #success-modal .modal-content { border-top: 5px solid #28a745; } #success-modal .btn-modal { background: #28a745; }
+        #error-modal .modal-content { border-top: 5px solid #e74c3c; } #error-modal .modal-logo { background: #e74c3c; } #error-modal .btn-modal { background: #333; }
+        #login-modal .modal-content { border-top: 5px solid #3498db; } #login-modal .modal-logo { background: #3498db; }
+        .btn-login-now { background: #3498db; width: 48%; } .btn-close-modal { background: #95a5a6; width: 48%; }
+        .btn-group { display: flex; justify-content: space-between; margin-top: 20px; }
+
+        .bill-info { text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px dashed #bbb; margin-top: 15px; }
+        .bill-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .bill-row strong { color: #666 !important; font-weight: normal; }
+        .bill-row span { color: #000 !important; font-weight: bold; }
         
-        .qr-frame {
-            border: 2px solid #2ecc71; border-radius: 10px; padding: 15px; margin: 15px 0; background: #f0fff4;
-        }
-        .qr-img { width: 100%; max-width: 250px; display: block; margin: 0 auto; border-radius: 5px; }
-        
-        .btn-modal { width: 100%; padding: 12px; background: #333; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-close { background: #888; margin-top: 10px; }
-        
-        /* Bảng hóa đơn nhỏ */
-        .mini-bill { text-align: left; font-size: 14px; color: #555; background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 10px; border: 1px dashed #ddd; }
-        .bill-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .qr-placeholder { font-style: italic; color: #e67e22; margin-top: 10px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -44,223 +58,365 @@
     <div class="booking-container">
         <h1>ĐẶT BÀN ONLINE</h1>
         <form id="booking-form">
+            <!-- Tên người đặt -->
             <div class="form-group">
-                <label>Họ tên:</label>
-                <input type="text" id="customer-name" placeholder="Ví dụ: Anh Tài" required>
+                <label>Họ tên người đặt:</label>
+                <input type="text" id="customer-name" placeholder="VD: Anh Tài..." required>
             </div>
             
-            <div class="form-group">
-                <label>Chi Nhánh:</label>
-                <select id="branch-select" onchange="loadTables()"></select>
+            <!-- Thành viên VIP -->
+            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; border: 1px dashed #3498db; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <input type="checkbox" id="check-member" style="width: auto; margin: 0;" onchange="toggleMemberInput()">
+                    <label for="check-member" style="margin: 0; color: #3498db; cursor: pointer; font-weight: bold;">Tôi là thành viên thân thiết</label>
+                </div>
+                <div id="member-check-box" style="display: none;">
+                    <div style="display: flex; gap: 5px;">
+                        <input type="text" id="member-phone" placeholder="Nhập SĐT..." style="margin: 0;">
+                        <button type="button" onclick="checkVip()" style="width: 100px; padding: 10px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer;">Kiểm tra</button>
+                    </div>
+                    <p id="vip-msg" style="font-size: 13px; margin-top: 5px; font-weight: bold; color: #333 !important;"></p>
+                </div>
             </div>
 
+            <!-- Chọn Chi Nhánh -->
             <div class="form-group">
-                <label>Bàn:</label>
-                <select id="table-select" required>
-                    <option value="">-- Đang tải danh sách... --</option>
+                <label>Chọn Chi Nhánh:</label>
+                <select id="branch-select" onchange="loadTables()">
+                    <option value="1">Chi Nhánh 1 (Quận 1)</option>
+                    <option value="2">Chi Nhánh 2 (Quận 7)</option>
                 </select>
             </div>
 
-            <!-- CHỌN GIỜ -->
+            <!-- Chọn Bàn (Động) -->
             <div class="form-group">
-                <label>Bắt đầu:</label>
-                <input type="datetime-local" id="start-time" required>
-            </div>
-            <div class="form-group">
-                <label>Kết thúc:</label>
-                <input type="datetime-local" id="end-time" required>
+                <label>Chọn Bàn:</label>
+                <select id="table-select" required onchange="updateQR()">
+                    <option value="">-- Đang tải dữ liệu --</option>
+                </select>
             </div>
 
-            <!-- CHỌN THANH TOÁN (CUỐI CÙNG) -->
+            <!-- 1. Thời gian được đưa lên trên -->
+            <div class="form-group">
+                <label>Thời gian bắt đầu:</label>
+                <input type="datetime-local" id="start-time" required onchange="updateQR()">
+            </div>
+            <div class="form-group">
+                <label>Thời gian kết thúc:</label>
+                <input type="datetime-local" id="end-time" required onchange="updateQR()">
+            </div>
+
+            <!-- 2. Hình thức thanh toán ở dưới cùng -->
             <div class="form-group" style="background: #e3f2fd; padding: 10px; border-radius: 8px;">
                 <label style="color:#0277bd">Hình thức thanh toán:</label>
-                <select id="payment-method">
-                    <option value="Chuyển khoản (QR)">Chuyển khoản Ngân hàng (QR Code)</option>
-                    <option value="Tiền mặt">Tiền mặt tại quầy (Trả sau)</option>
-                    <option value="Ví MoMo">Ví MoMo (Bảo trì)</option>
+                <select id="payment-method" onchange="updateQR()">
+                    <option value="Tiền mặt">Tiền mặt tại quán (Trả sau)</option>
+                    <option value="Chuyển khoản (QR)">Chuyển khoản ngân hàng (QR)</option>
+                    <option value="Ví MoMo">Ví MoMo</option>
                 </select>
+                
+                <!-- Khu vực hiển thị thông báo QR hoặc lỗi Momo -->
+                <div id="payment-info-box"></div>
             </div>
 
-            <button type="submit" class="btn" style="width: 100%; padding: 15px; font-size: 16px; font-weight: bold; background: #28a745; color: white; border: none; border-radius: 8px; cursor: pointer;">
-                XÁC NHẬN ĐẶT BÀN
-            </button>
+            <button type="submit" class="btn" style="width: 100%; font-weight: bold;">XÁC NHẬN ĐẶT</button>
         </form>
     </div>
 
-    <!-- MODAL HIỆN MÃ QR (Chỉ hiện sau khi bấm đặt) -->
-    <div id="payment-modal" class="custom-modal">
+    <!-- CÁC MODAL THÔNG BÁO -->
+    <!-- 1. MODAL ĐĂNG NHẬP -->
+    <div id="login-modal" class="custom-modal">
         <div class="modal-content">
             <div class="modal-logo">71 BILLIARDS</div>
-            <h3 id="modal-title" style="color: #2ecc71; margin: 10px 0;">ĐẶT BÀN THÀNH CÔNG</h3>
-            
-            <!-- Khu vực hiện thông tin hóa đơn -->
-            <div class="mini-bill" id="modal-bill"></div>
-
-            <!-- Khu vực hiện mã QR -->
-            <div id="qr-container" style="display: none;" class="qr-frame">
-                <img id="qr-image" src="" class="qr-img">
-                <p style="margin: 10px 0 5px; color: #d35400; font-weight: bold;">Quét mã để thanh toán ngay</p>
-                <p style="font-size: 12px; color: #666;"><i class="fa-solid fa-sync fa-spin"></i> Hệ thống đang chờ tiền về...</p>
-                <p style="font-size: 11px; color: #888;">Tự động xác nhận sau 5 giây</p>
+            <div class="modal-title" style="color: #3498db !important;">YÊU CẦU ĐĂNG NHẬP</div>
+            <p>Vui lòng đăng nhập trước khi đặt bàn.</p>
+            <div class="btn-group">
+                <button class="btn-modal btn-close-modal" onclick="closeLoginModal()">Hủy</button>
+                <button class="btn-modal btn-login-now" onclick="window.location.href='login.html'">Đăng nhập ngay</button>
             </div>
-
-            <button class="btn-modal" onclick="window.location.href='history.html'">XEM LỊCH SỬ</button>
         </div>
     </div>
 
-    <!-- MODAL BÁO LỖI -->
+    <!-- 2. MODAL THÀNH CÔNG (HIỆN MÃ QR NẾU CẦN) -->
+    <div id="success-modal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-logo">71 BILLIARDS</div>
+            <h3 class="modal-title" id="modal-success-title" style="color:#28a745 !important;">ĐẶT BÀN THÀNH CÔNG!</h3>
+            
+            <!-- KHU VỰC HIỆN MÃ QR KHI ĐÃ ĐẶT XONG -->
+            <div id="qr-result-section" style="display:none; text-align:center; background:#f9f9f9; padding:15px; border:2px dashed #2ecc71; border-radius:10px; margin-bottom:15px;">
+                <img id="final-qr-img" src="" style="width:200px; border-radius:8px;">
+                <p style="margin-top:10px; color:#d35400; font-weight:bold; font-size:14px;">Quét mã để hoàn tất thanh toán</p>
+                <p style="font-size:12px; color:#555"><i class="fa-solid fa-spinner fa-spin"></i> Đang chờ tiền về...</p>
+                <p style="font-size:11px; color:#888;">(Hệ thống tự động duyệt sau 3-5 giây)</p>
+            </div>
+
+            <!-- HÓA ĐƠN -->
+            <div class="bill-info">
+                <div class="bill-row"><strong>Khách hàng:</strong> <span id="bill-name">...</span></div>
+                <div class="bill-row"><strong>Chi nhánh:</strong> <span id="bill-branch">...</span></div>
+                <div class="bill-row"><strong>Bàn:</strong> <span id="bill-table">...</span></div>
+                <div class="bill-row"><strong>Thanh toán:</strong> <span id="bill-payment" style="color:#3498db !important;">...</span></div>
+                <hr style="margin: 8px 0; border: 0; border-top: 1px dashed #ccc;">
+                <div class="bill-row"><strong>Bắt đầu:</strong> <span id="bill-start">...</span></div>
+                <div class="bill-row"><strong>Kết thúc:</strong> <span id="bill-end">...</span></div>
+                <div class="bill-row"><strong>Thời lượng:</strong> <span id="bill-duration" style="color: blue !important;">...</span></div>
+                <div class="bill-row" style="margin-top: 10px; font-size: 16px;">
+                    <strong>TỔNG CỘNG:</strong> <span id="bill-total" style="color: #e74c3c !important; font-weight: bold;">...</span>
+                </div>
+            </div>
+            <button class="btn-modal" onclick="redirectToHistory()">XEM LỊCH SỬ ĐẶT</button>
+        </div>
+    </div>
+
+    <!-- 3. MODAL BÁO LỖI -->
     <div id="error-modal" class="custom-modal">
-        <div class="modal-content" style="border-top: 5px solid red;">
-            <h3 style="color:red">Lỗi</h3>
-            <p id="error-msg">Nội dung lỗi...</p>
-            <button class="btn-modal btn-close" onclick="document.getElementById('error-modal').style.display='none'">Đóng</button>
+        <div class="modal-content">
+            <div class="modal-logo">71 BILLIARDS</div>
+            <h3 style="color: #e74c3c !important; margin: 20px 0;">THÔNG BÁO</h3>
+            <div id="error-message-text" style="color: #555 !important; line-height: 1.5; margin-bottom: 20px;"></div>
+            <button class="btn-modal" onclick="closeErrorModal()">Đóng</button>
         </div>
     </div>
 
     <script>
-        // === CẤU HÌNH THÔNG TIN CHÍNH ===
         const API_URL = '/api';
-        const BANK_INFO = { bank: 'MB', account: '07118042005', name: 'PHAM HOAI AN' };
+        let currentDiscount = 0;
+        let checkInterval = null;
         
-        let checkInterval = null; // Biến kiểm tra tiền
+        // --- THÔNG TIN NGÂN HÀNG (Bạn sửa lại nếu cần) ---
+        const BANK_ID = 'MB'; 
+        const ACCOUNT_NO = '07118042005';
+        const ACCOUNT_NAME = 'PHAM HOAI AN'; 
 
-        // --- 1. LOGIC FORM ---
-        const urlParams = new URLSearchParams(location.search);
-        if(urlParams.get('branch')) document.getElementById('branch-select').value = urlParams.get('branch');
-        
-        // Load Danh Sách Bàn (Tự động chạy)
-        loadTables();
+        // Khởi chạy
+        const urlParams = new URLSearchParams(window.location.search);
+        const branchParam = urlParams.get('branch'); 
+        if(branchParam) document.getElementById('branch-select').value = branchParam;
+
         function loadTables() {
-            const bid = document.getElementById('branch-select').value || 1;
-            const sel = document.getElementById('table-select');
-            sel.innerHTML = '<option>⏳ Đang tải bàn...</option>';
-            
-            fetch(`${API_URL}/tables?branch_id=${bid}`)
-                .then(r => r.json())
+            const branchId = document.getElementById('branch-select').value;
+            const tableSelect = document.getElementById('table-select');
+            tableSelect.innerHTML = '<option value="">⏳ Đang tải dữ liệu...</option>';
+            tableSelect.disabled = true;
+
+            fetch(`${API_URL}/tables?branch_id=${branchId}`)
+                .then(res => res.json())
                 .then(data => {
-                    sel.innerHTML = '<option value="">-- Chọn bàn --</option>';
-                    data.forEach(t => {
-                        // Tính năng hiển thị (Bận)
-                        let note = t.is_busy > 0 ? " (🔴 Đang bận)" : "";
-                        sel.innerHTML += `<option value="${t.id}" data-price="${t.price_per_hour}">${t.name} - ${new Intl.NumberFormat().format(t.price_per_hour)}đ${note}</option>`;
+                    tableSelect.innerHTML = '<option value="">-- Vui lòng chọn bàn --</option>';
+                    tableSelect.disabled = false;
+                    
+                    if(data.length === 0) { tableSelect.innerHTML += '<option disabled>Hết bàn</option>'; return; }
+                    
+                    data.forEach(table => {
+                        const priceFormatted = new Intl.NumberFormat('vi-VN').format(table.price_per_hour);
+                        // Cảnh báo bàn bận
+                        const busyMark = table.is_busy > 0 ? " (🔴 Đang bận)" : "";
+                        
+                        const option = document.createElement('option');
+                        option.value = table.id;
+                        option.setAttribute('data-price', table.price_per_hour);
+                        option.innerText = `${table.name} (${table.type}) - ${priceFormatted} VNĐ/h ${busyMark}`;
+                        
+                        tableSelect.appendChild(option);
                     });
                     
-                    const tid = urlParams.get('table_id');
-                    if(tid) sel.value = tid;
-                });
+                    const preSelectedTable = urlParams.get('table_id');
+                    if(preSelectedTable && data.some(t => t.id == preSelectedTable)) tableSelect.value = preSelectedTable;
+                    
+                    updateQR();
+                })
+                .catch(() => tableSelect.innerHTML = '<option value="">Lỗi kết nối</option>');
+        }
+        loadTables();
+
+        // VIP Check
+        function toggleMemberInput() {
+            const isChecked = document.getElementById('check-member').checked;
+            document.getElementById('member-check-box').style.display = isChecked ? 'block' : 'none';
+            if(!isChecked) { currentDiscount = 0; document.getElementById('vip-msg').innerText = ""; updateQR(); }
         }
 
-        // --- 2. XỬ LÝ NÚT ĐẶT (CLICK SẼ KHÔNG BỊ ĐƠ NỮA) ---
+        async function checkVip() {
+            const phone = document.getElementById('member-phone').value.trim();
+            const msgBox = document.getElementById('vip-msg');
+            if(!phone) { showErrorModal("Vui lòng nhập SĐT!"); return; }
+
+            try {
+                const res = await fetch(`${API_URL}/check-vip`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone })
+                });
+                const data = await res.json();
+                if (data.isVip) {
+                    currentDiscount = 10; msgBox.innerHTML = `<span style="color:green">✅ ${data.message}</span>`;
+                    updateQR();
+                } else {
+                    currentDiscount = 0; msgBox.innerHTML = `<span style="color:orange">⚠️ ${data.message}</span>`;
+                }
+            } catch(err) { showErrorModal("Lỗi server kiểm tra VIP"); }
+        }
+
+        // --- CẬP NHẬT HIỂN THỊ TRONG FORM ---
+        function updateQR() {
+            const method = document.getElementById('payment-method').value;
+            const box = document.getElementById('payment-info-box');
+            
+            box.innerHTML = ''; 
+
+            if (method.includes('MoMo')) {
+                box.innerHTML = `<div class="momo-alert"><i class="fa-solid fa-triangle-exclamation"></i> Ví MoMo hiện đang bảo trì.<br>Vui lòng chọn hình thức khác.</div>`;
+                return;
+            }
+
+            if (method.includes('Chuyển khoản')) {
+                // Chỉ hiện dòng thông báo nhỏ, KHÔNG HIỆN QR LÚC NÀY
+                box.innerHTML = `<div class="qr-placeholder"><i class="fa-solid fa-qrcode"></i> Mã QR sẽ hiện ra sau khi bạn bấm <b>"Xác Nhận Đặt"</b></div>`;
+            }
+        }
+
+        // --- SUBMIT (Xử lý đặt bàn) ---
         document.getElementById('booking-form').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Lấy dữ liệu
-            const userStr = localStorage.getItem('user_info');
-            if(!userStr) { alert("Vui lòng đăng nhập!"); window.location.href='login.html'; return; }
-            const user = JSON.parse(userStr);
+            // 1. Check Login
+            const userStr = localStorage.getItem('user_info') || localStorage.getItem('user'); 
+            if (!userStr) { showLoginModal(); return; }
+            const currentUser = JSON.parse(userStr);
 
+            // 2. Validate
             const nameVal = document.getElementById('customer-name').value;
-            const tableVal = document.getElementById('table-select').value;
-            const payMethod = document.getElementById('payment-method').value;
+            const tableId = document.getElementById('table-select').value;
+            const startTimeVal = document.getElementById('start-time').value;
+            const endTimeVal = document.getElementById('end-time').value;
+            const paymentVal = document.getElementById('payment-method').value; 
             
-            if(payMethod.includes('MoMo')) { showError('Ví MoMo đang bảo trì.'); return; }
-            if(!tableVal) { showError('Vui lòng chọn bàn.'); return; }
+            if(paymentVal.includes('MoMo')) { showErrorModal("Ví MoMo đang bảo trì!"); return; }
+            if (!nameVal.trim()) { showErrorModal("Vui lòng nhập tên!"); return; }
+            if (!tableId) { showErrorModal("Vui lòng chọn bàn!"); return; }
 
-            const start = new Date(document.getElementById('start-time').value);
-            const end = new Date(document.getElementById('end-time').value);
-
-            // Kiểm tra giờ
+            const start = new Date(startTimeVal);
+            const end = new Date(endTimeVal);
             const now = new Date();
-            // Lấy thời gian hiện tại cộng thêm 7 tiếng (để khớp múi giờ Server) - Đã fix an toàn
-            // Nhưng đơn giản nhất: So sánh với chính nó.
-            if(end <= start) { showError('Giờ Kết thúc phải SAU giờ Bắt đầu'); return; }
-            if(start < now) { showError('Vui lòng chọn thời gian tương lai.'); return; }
+            // Lùi về 1 phút để tránh lỗi sai lệch giây
+            const minTime = new Date(now.getTime() - 60000); 
 
-            // Tính tiền
-            const sel = document.getElementById('table-select');
-            const price = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0;
-            const hours = (end - start) / 3600000;
-            const total = Math.ceil(hours * price);
+            // Cho phép đặt trong quá khứ gần (để demo), thực tế nên dùng: minTime = now + 30phút
+            // if (start < minTime) { showErrorModal("Vui lòng đặt cho tương lai."); return; }
+            if (end <= start) { showErrorModal("Giờ kết thúc phải SAU giờ bắt đầu."); return; }
 
+            const selectedOption = document.getElementById('table-select').options[document.getElementById('table-select').selectedIndex];
+            const pricePerHour = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+            const durationHours = (end - start) / 3600000;
+            
+            let finalPrice = Math.ceil(durationHours * pricePerHour);
+            if(currentDiscount > 0) finalPrice = finalPrice * 0.9; 
+            
+            if (finalPrice < 0) finalPrice = 0; // Tránh lỗi tiền âm
+
+            // 3. Gọi API Đặt bàn
             try {
-                // Gửi lên Server
-                const res = await fetch(`${API_URL}/booking`, {
+                const response = await fetch(`${API_URL}/booking`, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        user_id: user.id, customer_name: nameVal, table_id: tableVal,
-                        start_time: document.getElementById('start-time').value,
-                        end_time: document.getElementById('end-time').value,
-                        total_price: total, payment_method: payMethod
+                        user_id: currentUser.id, 
+                        customer_name: nameVal,
+                        table_id: tableId,
+                        start_time: startTimeVal,
+                        end_time: endTimeVal,
+                        total_price: finalPrice,
+                        payment_method: paymentVal
                     })
                 });
 
-                const result = await res.json();
-
-                if (res.ok) {
-                    // => THÀNH CÔNG -> HIỆN MODAL QR
-                    showPaymentModal(nameVal, total, payMethod, result.bookingId);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    // Thành công -> Hiện Modal Xác nhận & QR (nếu có)
+                    showSuccessModal(nameVal, start, end, durationHours, finalPrice, result.bookingId);
                 } else {
-                    // => THẤT BẠI
-                    showError(result.message + (result.suggestion ? `<br>Gợi ý: ${new Date(result.suggestion).toLocaleTimeString('vi-VN')}` : ""));
+                    if (response.status === 400 && result.suggestion) {
+                        // Lỗi trùng lịch -> Có gợi ý
+                        const timeStr = new Date(result.suggestion).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+                        const subMsg = `<div class="suggestion-box">💡 <b>Gợi ý:</b> Bàn sẽ trống lúc <strong>${timeStr}</strong>.<br>Vui lòng chọn sau giờ này.</div>`;
+                        showErrorModal("Bàn này đã bị trùng lịch!" + subMsg);
+                    } else {
+                        showErrorModal("Lỗi: " + result.message);
+                    }
                 }
-
-            } catch (err) { showError('Lỗi kết nối Server'); }
+            } catch (err) {
+                console.error(err);
+                showErrorModal("Không thể kết nối đến máy chủ.");
+            }
         });
 
-        // --- 3. HÀM HIỂN THỊ MODAL THANH TOÁN (XỊN XÒ) ---
-        function showPaymentModal(name, total, method, bookingId) {
-            const modal = document.getElementById('payment-modal');
-            const qrContainer = document.getElementById('qr-container');
-            const fmt = new Intl.NumberFormat('vi-VN').format(total);
+        // --- SUCCESS MODAL & QR LOGIC ---
+        function showSuccessModal(name, start, end, hours, total, bookingId) {
+            const branchText = document.getElementById('branch-select').selectedOptions[0].text;
+            const tableName = document.getElementById('table-select').selectedOptions[0].text.split(' - ')[0];
+            const payMethodText = document.getElementById('payment-method').options[document.getElementById('payment-method').selectedIndex].text;
+            const moneyFormatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
             
-            // Điền thông tin hóa đơn
-            document.getElementById('modal-bill').innerHTML = `
-                <div class="bill-row"><strong>Khách hàng:</strong> <span>${name}</span></div>
-                <div class="bill-row"><strong>Hình thức:</strong> <span style="color:#007bff; font-weight:bold">${method}</span></div>
-                <div class="bill-row"><strong>Tổng cộng:</strong> <span style="color:red; font-size:16px; font-weight:bold">${fmt} đ</span></div>
-            `;
+            const qrSection = document.getElementById('qr-result-section');
+            const modalTitle = document.getElementById('modal-success-title');
 
-            // Logic QR Code
-            if (method.includes('Chuyển khoản')) {
-                qrContainer.style.display = 'block';
-                // Tạo QR VietQR xịn
-                const content = `BIDA ${bookingId}`; // Nội dung CK: BIDA + Mã
-                const linkQR = `https://img.vietqr.io/image/${BANK_INFO.bank}-${BANK_INFO.account}-compact2.png?amount=${total}&addInfo=${content}&accountName=${encodeURIComponent(BANK_INFO.name)}`;
-                
-                document.getElementById('qr-image').src = linkQR;
+            // --- TRƯỜNG HỢP 1: CHUYỂN KHOẢN (QR) ---
+            if (payMethodText.includes("Chuyển khoản") && bookingId) {
+                // Hiện vùng QR
+                qrSection.style.display = "block";
+                modalTitle.innerText = "THANH TOÁN NGAY";
+                modalTitle.style.color = "#d35400"; // Màu cam
+
+                const transferContent = `BIDA ${bookingId}`;
+                const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACCOUNT_NO}-compact2.png?amount=${total}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(ACCOUNT_NAME)}`;
+                document.getElementById('final-qr-img').src = qrUrl;
 
                 // Tự động kiểm tra tiền về
-                startCheckPayment(bookingId);
+                if (checkInterval) clearInterval(checkInterval);
+                checkInterval = setInterval(async () => {
+                    try {
+                        const res = await fetch(`${API_URL}/booking/status/${bookingId}`);
+                        const data = await res.json();
+                        if (data.status === 'confirmed') {
+                            clearInterval(checkInterval);
+                            alert("✅ ĐÃ NHẬN TIỀN! Giao dịch hoàn tất.");
+                            window.location.href = "history.html";
+                        }
+                    } catch(e){}
+                }, 3000); // 3 giây/lần
 
             } else {
-                qrContainer.style.display = 'none'; // Ẩn QR nếu tiền mặt
+                // --- TRƯỜNG HỢP 2: TIỀN MẶT ---
+                qrSection.style.display = "none"; // Ẩn QR
+                modalTitle.innerText = "ĐẶT BÀN THÀNH CÔNG!";
+                modalTitle.style.color = "#28a745";
             }
+            
+            // Điền thông tin hóa đơn
+            document.getElementById('bill-name').innerText = name;
+            document.getElementById('bill-branch').innerText = branchText;
+            document.getElementById('bill-table').innerText = tableName;
+            
+            const payStatus = payMethodText.includes("Tiền mặt") ? " (Trả sau tại quầy)" : " (Đang chờ thanh toán...)";
+            document.getElementById('bill-payment').innerText = payMethodText + payStatus;
+            if(!payMethodText.includes("Tiền mặt")) document.getElementById('bill-payment').style.color = "#d35400";
 
-            modal.style.display = 'flex';
+            document.getElementById('bill-start').innerText = start.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('bill-end').innerText = end.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+            
+            document.getElementById('bill-duration').innerText = `${Math.floor(hours)}h ${Math.round((hours%1)*60)}p`;
+            document.getElementById('bill-total').innerText = moneyFormatter.format(total);
+            if(currentDiscount > 0) document.getElementById('bill-total').innerHTML += " <small style='color:green'>(-10%)</small>";
+
+            document.getElementById('success-modal').style.display = 'flex';
         }
 
-        // --- 4. TỰ ĐỘNG CHECK TIỀN ---
-        function startCheckPayment(id) {
-            if(checkInterval) clearInterval(checkInterval);
-            checkInterval = setInterval(async () => {
-                try {
-                    const res = await fetch(`${API_URL}/booking/status/${id}`);
-                    const data = await res.json();
-                    if(data.status === 'confirmed') {
-                        clearInterval(checkInterval);
-                        alert("✅ TIỀN ĐÃ VỀ! Cảm ơn bạn.");
-                        window.location.href = "history.html";
-                    }
-                } catch(e){}
-            }, 3000); // 3 giây hỏi 1 lần
-        }
-
-        // --- 5. HÀM TIỆN ÍCH ---
-        function showError(msg) {
-            document.getElementById('error-msg').innerHTML = msg;
-            document.getElementById('error-modal').style.display = 'flex';
-        }
+        // Utils
+        function redirectToHistory() { window.location.href = "history.html"; }
+        function showErrorModal(htmlMsg) { document.getElementById('error-message-text').innerHTML = htmlMsg; document.getElementById('error-modal').style.display = 'flex'; }
+        function closeErrorModal() { document.getElementById('error-modal').style.display = 'none'; }
+        function showLoginModal() { document.getElementById('login-modal').style.display = 'flex'; }
+        function closeLoginModal() { document.getElementById('login-modal').style.display = 'none'; }
     </script>
 </body>
 </html>

@@ -32,6 +32,22 @@ setInterval(() => {
 }, 5000);
 
 // --- CÁC API ---
+// ===========================================
+// API MỚI: LẤY DANH SÁCH CHI NHÁNH
+// ===========================================
+app.get('/api/branches', (req, res) => {
+    db.query("SELECT * FROM branches", (err, results) => {
+        if (err) {
+            console.error("Lỗi lấy chi nhánh:", err);
+            // Nếu lỗi DB, trả về dữ liệu cứng để web không bị trắng
+            return res.json([
+                {id: 1, name: "Chi nhánh 1 (Quận 1)"},
+                {id: 2, name: "Chi nhánh 2 (Quận 7)"}
+            ]); 
+        }
+        res.json(results);
+    });
+});
 
 // 1. API Danh sách bàn
 app.get('/api/tables', (req, res) => {

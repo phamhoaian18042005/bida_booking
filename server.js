@@ -36,6 +36,38 @@ app.get('/api/branches', (req, res) => {
 });
 
 // ============================================
+// API 4: XEM LỊCH SỬ CỦA USER (FINAL FIX)
+// ============================================
+app.get('/api/history/:userId', (req, res) => {
+    const userId = req.params.userId;
+    // Sử dụng LEFT JOIN để dù bàn có bị xóa thì lịch sử vẫn hiện
+    const sql = `
+        SELECT 
+            b.id, 
+            b.user_id, 
+            b.customer_name, 
+            t.name as table_name, 
+            t.branch_id, 
+            b.start_time, 
+            b.end_time, 
+            b.status, 
+            b.total_price, 
+            b.payment_method
+        FROM bookings b
+        LEFT JOIN tables t ON b.table_id = t.id
+        WHERE b.user_id = ?
+        ORDER BY b.start_time DESC
+    `;
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error("Lỗi lấy lịch sử:", err); // In lỗi ra log của Render
+            return res.status(500).json({ message: "Lỗi Server" });
+        }
+        res.json(results);
+    });
+});
+
+// ============================================
 // 2. CÁC API KHÁC (GIỮ NGUYÊN)
 // ============================================
 
@@ -73,6 +105,8 @@ app.post('/api/booking', (req, res) => {
         });
     });
 });
+
+
 
 // API Auth
 app.post('/api/login', (req, res) => {

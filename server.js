@@ -131,17 +131,39 @@ app.get('/api/tables', (req, res) => {
 app.get('/api/branches', (req,res) => { db.query("SELECT * FROM branches", (e,r)=>res.json(r||[])); });
 
 // Đặt bàn
+// ============================================
+// API 2: ĐẶT BÀN (SỬA LOGIC TRẠNG THÁI)
+// ============================================
 app.post('/api/booking', (req, res) => {
     const { user_id, customer_name, table_id, start_time, end_time, total_price, payment_method } = req.body;
-    
-    // Check trùng
-    db.query(`SELECT * FROM bookings WHERE table_id=? AND status!='cancelled' AND ((start_time < ? AND end_time > ?) OR (start_time < ? AND end_time > ?) OR (start_time >= ? AND end_time <= ?))`,
-    [table_id, end_time, start_time, end_time, start_time, start_time, end_time], (err, r) => {
-        if(r.length > 0) return res.status(400).json({message:"Trùng", suggestion:r[0].end_time});
 
-        db.query("INSERT INTO bookings (user_id, customer_name, table_id, start_time, end_time, total_price, payment_method, status) VALUES (?,?,?,?,?,?,?, 'confirmed')",
-        [user_id, customer_name, table_id, start_time, end_time, total_price, payment_method], (e,rs) => {
-            if(e) return res.status(500).json(e); res.json({message:"OK", bookingId:rs.insertId});
+    const checkSql = `SELECT * FROM bookings WHERE table_id = ? AND status != 'cancelled' 
+                      AND ((start_time < ? AND end_time > ?) OR (start_time < ? AND end_time > ?) OR (start_time >= ? AND end_time <= ?))`;
+    
+    db.query(checkSql, [table_id, end_time, start_time, end_time, start_time, start_time, end_time], (err, results) => {
+        if (err) return res.status(500).json(err);
+        
+        if (results.length > 0) {
+            let latestEndTime = results[0].end_time;
+            results.forEach(b => { if (new Date(b.end_time) > new Date(latestEndTime)) latestEndTime = b.end_time; });
+            return res.status(400).json({ message: "Bàn đã bị trùng giờ đặt!", suggestion: latestEndTime });
+        }
+
+        // --- ĐOẠN SỬA MỚI TẠI ĐÂY ---
+        // Nếu chọn "Tiền mặt" -> Trạng thái: confirmed (Đã đặt)
+        // Nếu chọn "Chuyển khoản" hoặc khác -> Trạng thái: pending (Chờ thanh toán)
+        let status = 'confirmed';
+        if (payment_method && (payment_method.includes('Chuyển khoản') || payment_method.includes('Online'))) {
+            status = 'pending';
+        }
+
+        const insertSql = "INSERT INTO bookings (user_id, customer_name, table_id, start_time, end_time, total_price, payment_method, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        db.query(insertSql, [user_id || 1, customer_name, table_id, start_time, end_time, total_price || 0, payment_method || 'Tiền mặt', status], (err, result) => {
+            if (err) return res.status(500).json(err);
+            
+            // Trả về cả status để Frontend biết đường xử lý
+            res.json({ message: "Thành công!", bookingId: result.insertId, status: status });
         });
     });
 });

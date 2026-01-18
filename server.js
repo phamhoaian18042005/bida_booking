@@ -130,6 +130,32 @@ app.get('/api/tables', (req, res) => {
 // Lấy chi nhánh
 app.get('/api/branches', (req,res) => { db.query("SELECT * FROM branches", (e,r)=>res.json(r||[])); });
 
+
+// --- QUAN TRỌNG: Cần phải đúng '/api/payment-webhook' ---
+app.post('/api/payment-webhook', (req, res) => {
+    try {
+        const data = req.body;
+        console.log("SePay Webhook Data:", data);
+
+        const content = data.content || ""; 
+        
+        // Logic lấy ID đơn hàng
+        const match = content.match(/BIDA\s*(\d+)/i);
+        
+        if (match) {
+            const bookingId = match[1];
+
+            const sql = `UPDATE bookings SET status = 'confirmed', payment_method = CONCAT(payment_method, ' (Đã TT)') WHERE id = ?`;
+            
+            db.query(sql, [bookingId], (err, result) => {
+                if (!err) console.log(`✅ Webhook: Đã thanh toán đơn #${bookingId}`);
+            });
+        }
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: "Server Error" });
+    }
+});
 // Đặt bàn
 // ============================================
 // API 2: ĐẶT BÀN (SỬA LOGIC TRẠNG THÁI)

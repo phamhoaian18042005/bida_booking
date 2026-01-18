@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
     
     <style>
-        body { background-color: #050505; color: #fff; min-height: 100vh; display: flex; flex-direction: column; font-family: sans-serif; }
+        body { background-color: #050505; color: #fff; min-height: 100vh; display: flex; flex-direction: column; font-family: sans-serif;}
         
         .page-header {
             padding: 40px 20px; text-align: center;
@@ -16,31 +16,40 @@
         }
         .page-header h1 { margin: 0; font-size: 28px; text-transform: uppercase; letter-spacing: 2px; }
 
-        .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; flex: 1; }
+        .container { max-width: 1200px; /* Tăng chiều rộng để chứa đủ cột */ margin: 30px auto; padding: 0 15px; flex: 1; }
+
         .table-responsive { overflow-x: auto; }
         table {
             width: 100%; border-collapse: collapse; background-color: #111;
             border-radius: 8px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
-        th { background-color: #1a1a1a; color: #ccc; font-size: 12px; padding: 15px; text-align: left; border-bottom: 2px solid #333; white-space: nowrap; }
+        th { background-color: #1a1a1a; color: #ccc; font-size: 12px; text-transform: uppercase; padding: 15px; text-align: left; border-bottom: 2px solid #333; white-space: nowrap; }
         td { padding: 15px; border-bottom: 1px solid #222; color: #eee; font-size: 14px; vertical-align: middle; }
-        
-        /* TRẠNG THÁI (Đã thêm Pending) */
-        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; white-space: nowrap; }
-        .st-confirmed { border: 1px solid #2ecc71; color: #2ecc71; background: rgba(46, 204, 113, 0.1); }
-        .st-cancelled { border: 1px solid #e74c3c; color: #e74c3c; background: rgba(231, 76, 60, 0.1); }
-        .st-pending   { border: 1px solid #f1c40f; color: #f1c40f; background: rgba(241, 196, 15, 0.1); }
+        tr:hover { background-color: #1f1f1f; transition: 0.3s; }
+
+        /* Badge Styles */
+        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; white-space: nowrap;}
+        .st-confirmed { border: 1px solid #2ecc71; color: #2ecc71; }
+        .st-cancelled { border: 1px solid #e74c3c; color: #e74c3c; }
         .st-completed { border: 1px solid #aaa; color: #aaa; }
 
-        .pay-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+        .pay-tag { font-size: 11px; padding: 4px 8px; border-radius: 4px; display: inline-block; font-weight: bold; white-space: nowrap; }
+        .pay-cash { background-color: #f39c12; color: black; }
         .pay-online { background-color: #0ea5e9; color: white; }
-        .pay-cash { background-color: #f59e0b; color: black; }
-        
+
+        .btn-cancel { background-color: transparent; color: #e74c3c; border: 1px solid #e74c3c; padding: 6px 12px; font-size: 12px; cursor: pointer; border-radius: 4px; transition: 0.3s; }
+        .btn-cancel:hover { background-color: #e74c3c; color: white; }
+        .btn-cancel.disabled { border-color: #444; color: #555; cursor: not-allowed; background: transparent; }
+
         .back-btn { display: inline-block; margin-top: 20px; color: #888; text-decoration: none; }
-        
+
         /* Modal */
         .custom-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 9999; }
         .modal-content { background-color: #111; color: white; border: 1px solid #444; padding: 30px; border-radius: 12px; width: 300px; text-align: center; }
+        .modal-logo { font-size: 20px; font-weight: bold; margin-bottom: 15px; display: inline-block; padding: 5px 15px; background: #fff; color: #000; letter-spacing: 2px; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+        .btn-confirm { background: #e74c3c; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; }
+        .btn-close { background: #555; color: white; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -55,7 +64,7 @@
 
     <div class="page-header">
         <h1>Lịch Sử Đặt Bàn</h1>
-        <p>Tài khoản: <b id="user-display-name">...</b></p>
+        <p>Quản lý các cuộc hẹn của <b id="user-display-name">...</b></p>
     </div>
 
     <div class="container">
@@ -64,87 +73,155 @@
                 <thead>
                     <tr>
                         <th>#ID</th>
-                        <th>Chi tiết</th>
-                        <th>Thời Gian (Bắt đầu - Kết thúc)</th>
-                        <th>Tiền & Thanh toán</th>
-                        <th>Trạng Thái</th>
+                        <!-- 1. THÊM CỘT NGƯỜI ĐẶT -->
+                        <th>Người đặt</th> 
+                        <th>Chi tiết bàn</th>
+                        <th>Ngày & Giờ (Chuẩn)</th>
+                        <th>Tổng tiền</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody id="history-body">
-                    <tr><td colspan="5" style="text-align:center; padding: 30px;">Loading...</td></tr>
+                    <tr><td colspan="8" style="text-align:center; padding: 30px;">Đang tải...</td></tr>
                 </tbody>
             </table>
         </div>
         <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a>
     </div>
 
+    <!-- MODAL CONFIRM -->
+    <div id="confirm-modal" class="custom-modal">
+        <div class="modal-content">
+            <div class="modal-logo">71 BILLIARDS</div>
+            <h3 style="margin-bottom: 10px;">Xác nhận hủy đặt bàn?</h3>
+            <p style="color: #bbb; font-size: 14px;">Hành động này không thể hoàn tác.</p>
+            <div class="btn-group">
+                <button class="btn-close" onclick="closeConfirmModal()">Giữ lại</button>
+                <button class="btn-confirm" onclick="executeCancel()">Đồng ý Hủy</button>
+            </div>
+        </div>
+    </div>
+
     <footer id="footer" class="footer-design"></footer>
 
-    <script>
+   <script>
         const API_URL = '/api';
 
+        // Check Login
         const userStr = localStorage.getItem('user_info') || localStorage.getItem('user');
         if (!userStr) window.location.href = 'login.html';
+        
         const currentUser = JSON.parse(userStr);
         document.getElementById('user-display-name').innerText = currentUser.username || currentUser.full_name;
 
-        // FORMAT
-        function formatMoney(amount) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
-        }
-        function formatDateTimeVN(dateStr) {
-            return new Date(dateStr).toLocaleString('vi-VN', {
-                hour: '2-digit', minute: '2-digit',
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                timeZone: 'Asia/Ho_Chi_Minh'
-            });
+        // --- HÀM FIX LỖI GIỜ (FINAL) ---
+        // Thuật toán: Biến giờ Server thành giờ UTC sau đó cộng 7 tiếng thủ công
+        function toVietnamTime(dateString) {
+            const date = new Date(dateString);
+            // Cộng 7 tiếng (7 * 60 phút * 60 giây * 1000 mili giây)
+            // (Nếu server đã lưu UTC thì cái này sẽ ép về đúng giờ VN)
+            const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+            const vnDate = new Date(date.getTime() + userTimezoneOffset + (7 * 3600000)); 
+            return vnDate;
         }
 
+        function formatTime(dateString) {
+            const vnDate = toVietnamTime(dateString);
+            return vnDate.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+
+        function formatDate(dateString) {
+            const vnDate = toVietnamTime(dateString);
+            return vnDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
+        }
+
+        // --- LOAD DỮ LIỆU ---
         fetch(`${API_URL}/history/${currentUser.id}`)
             .then(res => res.json())
             .then(data => {
                 const tbody = document.getElementById('history-body');
                 tbody.innerHTML = ''; 
-                if (data.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 30px;">Bạn chưa đặt bàn nào.</td></tr>`; return; }
+
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px;">Bạn chưa đặt bàn nào.</td></tr>`;
+                    return;
+                }
 
                 data.forEach(item => {
-                    let statusBadge = '';
-                    // LOGIC TRẠNG THÁI MỚI
+                    // Logic Tính nút Hủy
+                    // Lưu ý: Tính logic thì phải dùng new Date(item.start_time) gốc của hệ thống để so sánh cho chuẩn
+                    const startReal = new Date(item.start_time);
+                    const now = new Date();
+                    // Render (UTC) và Máy bạn (VN) lệch nhau, cần fix logic so sánh:
+                    // Đơn giản nhất: Lấy start time + 7 tiếng so với Now VN
+                    const startVN = toVietnamTime(item.start_time); 
+                    
+                    const minutesLeft = (startReal - now) / 60000; // Tính theo giờ gốc server
+
+                    let statusBadge = '', actionButton = '-';
+                    
                     if (item.status === 'confirmed') {
-                        statusBadge = `<span class="status-badge st-confirmed">✅ Đã đặt</span>`;
-                    } else if (item.status === 'pending') {
-                        statusBadge = `<span class="status-badge st-pending">⏳ Chờ thanh toán</span>`;
-                    } else if (item.status === 'cancelled') {
+                        statusBadge = `<span class="status-badge st-confirmed">✅ Đã Đặt (Xong)</span>`;
+                    } 
+                    else if (item.status === 'pending') {
+                        statusBadge = `<span class="status-badge" style="background:#fff3cd; color:#d35400; border:1px solid #ffecb5">⌛ Chờ thanh toán</span>`;
+                        actionButton = `<button class="btn-cancel" onclick="openConfirmModal(${item.id})">Hủy đơn</button>`;
+                    } 
+                    else if (item.status === 'cancelled') {
                         statusBadge = `<span class="status-badge st-cancelled">❌ Đã hủy</span>`;
-                    } else {
+                    } 
+                    else {
                         statusBadge = `<span class="status-badge st-completed">🏁 Hoàn tất</span>`;
                     }
 
-                    const pMethod = item.payment_method || 'Tiền mặt';
-                    const payTagHtml = pMethod.includes('Tiền mặt') 
-                        ? `<div class="pay-tag pay-cash">Tiền mặt</div>` 
-                        : `<div class="pay-tag pay-online">Chuyển khoản</div>`;
+                    // Thanh toán hiển thị
+                    let pMethod = item.payment_method || 'Tiền mặt';
+                    let payTagHtml = pMethod.includes('Tiền mặt') 
+                        ? `<span class="pay-tag pay-cash">Tiền mặt</span>` 
+                        : `<span class="pay-tag pay-online">Chuyển khoản</span>`;
+
+                    const branchInfo = `CN ${item.branch_id || '1'}`;
 
                     tbody.innerHTML += `
                         <tr>
-                            <td>#${item.id}</td>
+                            <td><b style="color:#666">#${item.id}</b></td>
                             <td>
-                                <strong style="color:#facc15">${item.table_name || '?'}</strong><br>
-                                <span style="font-size:12px; color:#888;">CN ${item.branch_id}</span>
+                                <strong style="color:#facc15">${item.table_name}</strong><br>
+                                <span style="font-size:11px; color:#aaa;">${branchInfo}</span>
                             </td>
                             <td>
-                                <b>${formatDateTimeVN(item.start_time)}</b><br>
-                                <span style="color:#aaa">đến</span> <b>${formatDateTimeVN(item.end_time)}</b>
+                                <b>${formatTime(item.start_time)}</b> <span style="font-size:11px">đến</span> <b>${formatTime(item.end_time)}</b>
+                                <br><span style="font-size:11px; color:#888">${formatDate(item.start_time)}</span>
                             </td>
                             <td>
-                                <b style="color:#4ade80">${formatMoney(item.total_price)}</b>
-                                ${payTagHtml}
+                                <div style="font-weight:bold; color:#4ade80">${formatCurrency(item.total_price)}</div>
+                                <div style="font-size:10px">${payTagHtml}</div>
                             </td>
                             <td>${statusBadge}</td>
+                            <td style="text-align:center;">${actionButton}</td>
                         </tr>
                     `;
                 });
             });
+
+        // Logic Modal Hủy (Giữ nguyên)
+        let deleteIdTemp = null;
+        function openConfirmModal(id) { deleteIdTemp = id; document.getElementById('confirm-modal').style.display = 'flex'; }
+        function closeConfirmModal() { deleteIdTemp = null; document.getElementById('confirm-modal').style.display = 'none'; }
+        async function executeCancel() {
+            if (!deleteIdTemp) return;
+            await fetch(`${API_URL}/booking/cancel`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ booking_id: deleteIdTemp })
+            });
+            location.reload();
+        }
     </script>
 </body>
-</html>
+</html> 

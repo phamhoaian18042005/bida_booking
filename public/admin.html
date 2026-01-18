@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* --- GIAO DIỆN DARK MODE --- */
         body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #e2e8f0; margin: 0; }
-        
         .admin-header { background-color: #1e293b; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .brand { font-size: 20px; font-weight: bold; color: #facc15; letter-spacing: 1px; }
         .logout-btn { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
@@ -25,12 +25,30 @@
         .card-rev { border-color: #22c55e; } .card-rev p { color: #4ade80; }
         .card-cancel { border-color: #ef4444; }
 
-        /* BẢNG DỮ LIỆU */
-        .section-heading { border-left: 4px solid #facc15; padding-left: 10px; margin-top: 30px; margin-bottom: 15px; color: white; font-weight: bold; }
-        .table-wrap { background: #1e293b; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        /* --- STYLE CHO THANH TÌM KIẾM (MỚI) --- */
+        .list-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 30px; margin-bottom: 15px;
+            border-left: 4px solid #facc15; padding-left: 10px;
+        }
+        .section-heading { margin: 0; color: white; font-size: 18px; font-weight: bold; }
         
+        .search-box { display: flex; gap: 8px; }
+        .search-box input {
+            background-color: #334155; border: 1px solid #475569; color: white;
+            padding: 8px 15px; border-radius: 6px; outline: none; width: 250px;
+        }
+        .search-box input:focus { border-color: #facc15; }
+        
+        .btn-search { background-color: #3b82f6; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-search:hover { background-color: #2563eb; }
+        .btn-refresh { background-color: #475569; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .btn-refresh:hover { background-color: #64748b; }
+
+        /* BẢNG DỮ LIỆU */
+        .table-wrap { background: #1e293b; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         table { width: 100%; border-collapse: collapse; }
-        th { background: #334155; padding: 15px 20px; text-align: left; color: #94a3b8; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #475569; white-space: nowrap; }
+        th { background: #334155; padding: 15px 20px; text-align: left; color: #94a3b8; font-size: 12px; text-transform: uppercase; border-bottom: 2px solid #475569; }
         td { padding: 15px 20px; border-bottom: 1px solid #334155; font-size: 14px; vertical-align: middle; }
         tr:hover { background: #2a354b; }
 
@@ -47,13 +65,11 @@
         .btn-cancel { background: #ef4444; } .btn-cancel:hover { background: #dc2626; }
         .btn-done { background: #22c55e; } .btn-done:hover { background: #16a34a; }
 
-        /* SEARCH */
-        .list-header { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 15px; border-left: 4px solid #facc15; padding-left: 10px; }
-        .search-box input { background: #334155; border: 1px solid #475569; color: white; padding: 8px 12px; border-radius: 4px; outline:none; }
-        .search-box button { background: #3b82f6; border: none; color: white; padding: 8px 12px; border-radius: 4px; cursor: pointer; margin-left: 5px; }
-
-        .pay-cash { color: #facc15; font-weight: bold; font-size: 12px; }
-        .pay-online { color: #38bdf8; font-weight: bold; font-size: 12px; }
+        .pay-info { font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; }
+        .pay-wait { color: #facc15; } 
+        .pay-done { color: #38bdf8; } 
+        .pay-cash-done { color: #4ade80; } 
+        .pay-cancel { color: #64748b; text-decoration: line-through; }
     </style>
 </head>
 <body>
@@ -61,21 +77,31 @@
     <header class="admin-header">
         <div class="brand"><i class="fa-solid fa-crown"></i> 71 BILLIARDS ADMIN</div>
         <div>
-            <span id="user-display" style="margin-right:15px">Admin</span>
+            <span id="user-display" style="margin-right:15px">Hello, Admin</span>
             <button onclick="logout()" class="logout-btn">Đăng xuất</button>
         </div>
     </header>
 
     <div class="container">
-        <!-- 1. STATS -->
+        
+        <!-- THỐNG KÊ -->
         <div class="stats-grid">
-            <div class="stat-card"><div><h3>Tổng đơn</h3><p id="st-total">0</p></div><i class="fa-solid fa-file-invoice" style="color: #60a5fa"></i></div>
-            <div class="stat-card card-rev"><div><h3>Tổng doanh thu</h3><p id="st-revenue">0 ₫</p></div><i class="fa-solid fa-money-bill-wave" style="color: #22c55e"></i></div>
-            <div class="stat-card card-cancel"><div><h3>Đơn hủy</h3><p id="st-cancel">0</p></div><i class="fa-solid fa-ban" style="color: #ef4444"></i></div>
+            <div class="stat-card">
+                <div><h3>Tổng đơn</h3><p id="st-total">0</p></div>
+                <i class="fa-solid fa-list-check" style="color: #60a5fa"></i>
+            </div>
+            <div class="stat-card card-rev">
+                <div><h3>Tổng doanh thu</h3><p id="st-revenue">0 ₫</p></div>
+                <i class="fa-solid fa-money-bill-wave" style="color: #22c55e"></i>
+            </div>
+            <div class="stat-card card-cancel">
+                <div><h3>Đơn hủy</h3><p id="st-cancel">0</p></div>
+                <i class="fa-solid fa-ban" style="color: #ef4444"></i>
+            </div>
         </div>
 
-        <!-- 2. MONTHLY -->
-        <h3 class="section-heading">DOANH THU THEO THÁNG</h3>
+        <!-- DOANH THU THÁNG -->
+        <h3 class="section-heading" style="border-left: 4px solid #facc15; padding-left: 10px; margin-bottom: 15px; color:white;">DOANH THU THEO THÁNG</h3>
         <div class="table-wrap">
             <table class="month-table">
                 <thead><tr><th>Năm</th><th>Tháng</th><th>Số đơn xong</th><th>Doanh Thu Tháng</th></tr></thead>
@@ -83,153 +109,190 @@
             </table>
         </div>
 
-        <!-- 3. BOOKINGS -->
+        <!-- THANH TIÊU ĐỀ + TÌM KIẾM (MỚI) -->
         <div class="list-header">
-            <h3 style="margin:0; font-size:18px;">DANH SÁCH CHI TIẾT</h3>
+            <h3 class="section-heading" style="border:none; padding:0; margin:0;">DANH SÁCH ĐƠN ĐẶT HÀNG</h3>
+            
             <div class="search-box">
-                <input type="text" id="search-inp" placeholder="Tìm tên khách...">
-                <button onclick="executeSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
-                <button onclick="loadData()" style="background:#475569"><i class="fa-solid fa-rotate-right"></i></button>
+                <input type="text" id="search-inp" placeholder="Tìm tên khách, số ĐT..." onkeypress="if(event.key==='Enter') executeSearch()">
+                <button class="btn-search" onclick="executeSearch()"><i class="fa-solid fa-magnifying-glass"></i> Tìm</button>
+                <button class="btn-refresh" onclick="loadData()" title="Làm mới"><i class="fa-solid fa-rotate-right"></i></button>
             </div>
         </div>
 
+        <!-- DANH SÁCH CHI TIẾT -->
         <div class="table-wrap">
             <table>
                 <thead>
-                    <tr><th>ID</th><th>Khách Hàng</th><th>Bàn</th><th>Giờ & Tiền</th><th>Thanh Toán</th><th>Trạng Thái</th><th>Hành Động</th></tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Khách Hàng</th>
+                        <th>Bàn Đặt</th>
+                        <th>Giờ & Tiền</th>
+                        <th>Thanh Toán</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
+                    </tr>
                 </thead>
                 <tbody id="main-list">
-                    <tr><td colspan="7" style="text-align:center; padding: 20px;">Đang tải dữ liệu...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; padding: 20px;">Loading data...</td></tr>
                 </tbody>
             </table>
         </div>
+
     </div>
 
     <script>
         const API_URL = '/api';
-
-        // Check Login
+        
+        // CHECK QUYỀN
         const userStr = localStorage.getItem('user_info') || localStorage.getItem('user');
         if (!userStr) window.location.href = 'login.html';
-        
+        const user = JSON.parse(userStr);
+        document.getElementById('user-display').innerText = "Xin chào, " + (user.username || 'Admin');
+
         function logout() { localStorage.removeItem('user_info'); window.location.href = 'login.html'; }
 
+        // --- HÀM TẢI DỮ LIỆU ---
         async function loadData() {
+            // Reset input tìm kiếm
+            document.getElementById('search-inp').value = '';
+            
             try {
-                // Tải Booking
+                // 1. TẢI BOOKINGS
                 const res = await fetch(`${API_URL}/admin/bookings`);
-                if(!res.ok) throw new Error("Lỗi API");
                 const data = await res.json();
                 renderTable(data);
 
-                // Tải Tháng
+                // 2. TẢI DOANH THU THÁNG
                 const resM = await fetch(`${API_URL}/admin/revenue/monthly`);
-                if(resM.ok) renderMonths(await resM.json());
+                const months = await resM.json();
+                renderMonths(months);
+
+            } catch(e) { console.error(e); }
+        }
+
+        // --- HÀM TÌM KIẾM (GỌI API SEARCH) ---
+        async function executeSearch() {
+            const keyword = document.getElementById('search-inp').value.trim();
+            if (!keyword) {
+                alert("Vui lòng nhập tên khách cần tìm!");
+                return;
+            }
+
+            try {
+                // Gọi API Search (Phải chắc chắn server.js đã có API này)
+                const res = await fetch(`${API_URL}/admin/search?q=${keyword}`);
+                const data = await res.json();
                 
-            } catch(e) {
-                console.error(e);
-                document.getElementById('main-list').innerHTML = `<tr><td colspan="7" style="text-align:center; color:red">Lỗi tải dữ liệu. Hãy kiểm tra Server!</td></tr>`;
+                if (data.length === 0) {
+                    alert("Không tìm thấy đơn hàng nào của khách: " + keyword);
+                } else {
+                    renderTable(data); // Tái sử dụng hàm vẽ bảng
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi tìm kiếm. Bạn đã thêm code API Search vào server.js chưa?");
             }
         }
 
-        // Render Table
+        // --- RENDER BẢNG CHÍNH (Đã hỗ trợ hiển thị Thanh Toán) ---
         function renderTable(data) {
             const tbody = document.getElementById('main-list');
             tbody.innerHTML = '';
-            const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 
             let count = data.length, revenue = 0, cancel = 0;
+            const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#aaa; padding:20px;">Không có dữ liệu</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding: 20px; color:#aaa;">Không có dữ liệu</td></tr>';
+                // Không return để nó vẫn cập nhật số 0 lên thống kê
             }
 
             data.forEach(item => {
-                if(item.status === 'cancelled') cancel++;
+                if (item.status === 'cancelled') cancel++;
                 else revenue += Number(item.total_price || 0);
 
-                let badge=`<span class="badge st-done">Hoàn thành</span>`;
-                let btns = `<span style="color:#555">-</span>`;
-                
-                if(item.status === 'confirmed') {
-                    badge = `<span class="badge st-ok">Đang đặt</span>`;
+                let badgeClass='st-done', badgeText='Hoàn thành', btns='<span style="color:#666">-</span>';
+                if (item.status === 'confirmed') {
+                    badgeClass = 'st-ok'; badgeText = 'Đã đặt';
                     btns = `<button class="btn-act btn-cancel" onclick="updateStatus(${item.id}, 'cancelled')">Hủy</button>
                             <button class="btn-act btn-done" onclick="updateStatus(${item.id}, 'completed')">Xong</button>`;
-                } else if(item.status === 'cancelled') {
-                    badge = `<span class="badge st-can">Đã hủy</span>`;
+                } else if (item.status === 'cancelled') {
+                    badgeClass = 'st-can'; badgeText = 'Đã hủy';
                 }
 
-                // Giờ Việt Nam
-                const optsTime = { hour:'2-digit', minute:'2-digit', timeZone: 'Asia/Ho_Chi_Minh' };
-                const optsDate = { day:'2-digit', month:'2-digit', timeZone: 'Asia/Ho_Chi_Minh' };
-                const timeStr = new Date(item.start_time).toLocaleTimeString('vi-VN', optsTime) + " - " + 
-                                new Date(item.end_time).toLocaleTimeString('vi-VN', optsTime);
-                const dateStr = new Date(item.start_time).toLocaleDateString('vi-VN', optsDate);
-
-                // Thanh toán
+                // Xử lý cột thanh toán
                 const pMethod = item.payment_method || 'Tiền mặt';
-                let payHtml = pMethod.includes('Tiền mặt') 
-                    ? `<span class="pay-cash"><i class="fa-solid fa-money-bill"></i> TM</span>` 
-                    : `<span class="pay-online"><i class="fa-solid fa-globe"></i> Online</span>`;
+                let payStatusHtml = '';
+                if (item.status === 'cancelled') {
+                    payStatusHtml = `<div class="pay-info pay-cancel"><i class="fa-solid fa-ban"></i> Đã hủy</div>`;
+                } else if (pMethod.includes('Online') || pMethod.includes('Chuyển') || pMethod.includes('Ví')) {
+                    payStatusHtml = `<div class="pay-info pay-done"><i class="fa-solid fa-circle-check"></i> Đã TT Online</div>`;
+                } else {
+                    if (item.status === 'completed') {
+                        payStatusHtml = `<div class="pay-info pay-cash-done"><i class="fa-solid fa-sack-dollar"></i> Đã thu tiền mặt</div>`;
+                    } else {
+                        payStatusHtml = `<div class="pay-info pay-wait"><i class="fa-regular fa-clock"></i> Chờ thu tiền</div>`;
+                    }
+                }
 
-                // Tên Khách
-                const guestName = item.customer_name || item.username || "Khách vãng lai";
+                const date = new Date(item.start_time).toLocaleDateString('vi-VN');
+                const timeStr = new Date(item.start_time).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}) 
+                                + " -> " + new Date(item.end_time).toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
 
                 tbody.innerHTML += `
                     <tr>
-                        <td style="color:#777">#${item.id}</td>
-                        <td style="font-weight:bold; color:#facc15">${guestName}</td>
-                        <td>${item.table_name || '?'}</td>
-                        <td><div class="price-text">${fmt.format(item.total_price)}</div><span style="font-size:11px;color:#888">${timeStr} (${dateStr})</span></td>
-                        <td>${payHtml}</td>
-                        <td>${badge}</td>
+                        <td style="color:#888">#${item.id}</td>
+                        <td class="highlight-text" style="color:#facc15; font-weight:bold">${item.customer_name || 'Khách'}</td>
+                        <td style="color:white;">${item.table_name || '...'}</td>
+                        <td class="price-text">${fmt.format(item.total_price)}<br><span style="font-size:11px;color:#94a3b8;font-weight:normal">${timeStr}<br>${date}</span></td>
+                        <td>${payStatusHtml}</td>
+                        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
                         <td>${btns}</td>
                     </tr>
                 `;
             });
 
-            if(!document.getElementById('search-inp').value) {
+            // Nếu đang là chế độ tìm kiếm thì không nên cập nhật tổng thống kê gốc, nhưng để đơn giản mình cứ update
+            // (Nếu muốn xịn hơn thì khi search không update ô Card thống kê)
+            if (document.getElementById('search-inp').value === '') {
                 document.getElementById('st-total').innerText = count;
                 document.getElementById('st-cancel').innerText = cancel;
                 document.getElementById('st-revenue').innerText = fmt.format(revenue);
             }
         }
 
-        // Render Months
+        // --- RENDER DOANH THU THÁNG ---
         function renderMonths(data) {
-            const box = document.getElementById('month-list');
-            box.innerHTML = '';
+            const mBody = document.getElementById('month-list');
+            mBody.innerHTML = '';
             const fmt = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
-            if(!data.length) box.innerHTML = '<tr><td colspan="4" style="text-align:center">Chưa có</td></tr>';
+            
+            if(data.length === 0) { mBody.innerHTML = '<tr><td colspan="4" style="text-align:center">Chưa có dữ liệu</td></tr>'; return; }
+
             data.forEach(m => {
-                box.innerHTML += `<tr>
-                    <td style="font-weight:bold; color:white">${m.year}</td>
+                mBody.innerHTML += `<tr>
+                    <td style="color:#fff;font-weight:bold">${m.year}</td>
                     <td>Tháng ${m.month}</td>
                     <td>${m.total_orders} đơn</td>
-                    <td style="color:#4ade80; font-weight:bold">${fmt.format(m.total_revenue)}</td>
+                    <td style="color:#facc15; font-weight:bold">${fmt.format(m.total_revenue)}</td>
                 </tr>`;
             });
         }
 
-        // Action
+        // --- UPDATE STATUS ---
         async function updateStatus(id, status) {
-            if(!confirm(status==='cancelled'?"Hủy đơn?":"Khách đã xong?")) return;
-            try {
-                await fetch(`${API_URL}/admin/status`, {
-                    method:'PUT', headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({id, status})
-                });
-                loadData();
-            } catch(e){ alert("Lỗi"); }
-        }
+            let msg = status === 'cancelled' ? "Xác nhận HỦY?" : "Xác nhận khách đã CHƠI XONG?";
+            if(!confirm(msg)) return;
 
-        // Search
-        async function executeSearch() {
-            const q = document.getElementById('search-inp').value;
-            if(!q) return;
-            const res = await fetch(`${API_URL}/admin/search?q=${q}`);
-            const data = await res.json();
-            renderTable(data);
+            try {
+                const res = await fetch(`${API_URL}/admin/status`, {
+                    method: 'PUT', headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify({id, status})
+                });
+                if(res.ok) loadData(); 
+            } catch(e) { alert("Lỗi kết nối server"); }
         }
 
         loadData();

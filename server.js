@@ -123,6 +123,22 @@ app.post('/api/register', (req, res) => {
         res.json({message:"OK"});
     });
 });
+// ===============================================
+// TÍNH NĂNG: TỰ ĐỘNG CẬP NHẬT TRẠNG THÁI (AUTO COMPLETE)
+// ===============================================
+setInterval(() => {
+    // Tìm các đơn "Đã đặt" mà giờ kết thúc đã qua rồi -> Chuyển thành "Hoàn thành"
+    const sql = `
+        UPDATE bookings 
+        SET status = 'completed' 
+        WHERE status = 'confirmed' AND end_time <= NOW()
+    `;
+    db.query(sql, (err, result) => {
+        if (!err && result.affectedRows > 0) {
+            console.log(`🤖 Hệ thống tự động hoàn thành ${result.affectedRows} đơn quá hạn.`);
+        }
+    });
+}, 60000); // Chạy mỗi 60 giây (1 phút)
 
 // API Lịch sử & Check Status... (Các API còn lại bạn giữ nguyên nhé)
 // ...

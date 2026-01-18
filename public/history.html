@@ -6,58 +6,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    
     <style>
+        /* CSS Gốc Giữ Nguyên */
         body { background-color: #050505; color: #fff; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Segoe UI', sans-serif; }
-        
-        .page-header {
-            padding: 40px 20px; text-align: center;
-            background: linear-gradient(to bottom, #111, #050505); border-bottom: 1px solid #333;
-        }
+        .page-header { padding: 40px 20px; text-align: center; background: linear-gradient(to bottom, #111, #050505); border-bottom: 1px solid #333; }
         .page-header h1 { margin: 0; font-size: 28px; text-transform: uppercase; color: #facc15; }
-        .page-header p { margin-top: 10px; color: #aaa; }
-
-        .container { max-width: 1300px; margin: 30px auto; padding: 0 20px; flex: 1; }
-
-        .table-responsive { overflow-x: auto; background-color: #1e1e1e; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        table { width: 100%; border-collapse: collapse; min-width: 900px; } /* Min width để không vỡ trên mobile */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; flex: 1; }
+        .table-responsive { overflow-x: auto; background-color: #1e1e1e; border-radius: 12px; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: #2c2c2c; color: #ccc; padding: 15px; text-align: left; font-size:12px; white-space:nowrap; border-bottom: 2px solid #444; }
+        td { padding: 15px; border-bottom: 1px solid #333; font-size: 14px; vertical-align: middle; }
         
-        th { background-color: #2c2c2c; color: #ccc; font-size: 13px; text-transform: uppercase; padding: 18px 15px; text-align: left; border-bottom: 2px solid #444; white-space: nowrap; }
-        td { padding: 18px 15px; border-bottom: 1px solid #333; color: #eee; font-size: 14px; vertical-align: middle; }
-        tr:hover { background-color: #252525; transition: 0.2s; }
+        .status-badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; white-space: nowrap; font-size: 11px;}
+        .st-confirmed { color: #4ade80; border: 1px solid #22c55e; }
+        .st-pending   { color: #facc15; border: 1px solid #eab308; }
+        .st-cancelled { color: #f87171; border: 1px solid #ef4444; }
+        .st-completed { color: #94a3b8; border: 1px solid #64748b; }
+        
+        .pay-cash { color: #facc15; font-weight: bold; font-size:12px; }
+        .pay-online { color: #38bdf8; font-weight: bold; font-size:12px; }
 
-        /* MÀU SẮC TRẠNG THÁI */
-        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; display: inline-block; white-space: nowrap;}
-        .st-confirmed { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e; } /* ĐÃ ĐẶT XONG (XANH) */
-        .st-pending   { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid #eab308; } /* CHỜ THANH TOÁN (VÀNG) */
-        .st-cancelled { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef4444; } /* HỦY (ĐỎ) */
-        .st-completed { background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid #64748b; } /* HOÀN TẤT (XÁM) */
-
-        /* Nút phân loại thanh toán */
-        .pay-tag { font-size: 12px; padding: 4px 10px; border-radius: 5px; font-weight: bold; white-space: nowrap; }
-        .pay-cash { background-color: #f59e0b; color: #000; }
-        .pay-online { background-color: #0ea5e9; color: white; }
-
-        .btn-cancel { color: #f87171; border: 1px solid #ef4444; background:none; padding: 6px 12px; cursor: pointer; border-radius: 5px; font-weight: 500; transition:0.3s; }
-        .btn-cancel:hover { background: #ef4444; color: white; }
-
-        .back-btn { display: inline-block; margin-top: 20px; color: #888; text-decoration: none; font-size: 14px; }
-        .back-btn:hover { color: #fff; }
-
+        .btn-cancel { color: #f87171; border: 1px solid #ef4444; background:none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .back-btn { display: inline-block; margin-top: 20px; color: #888; text-decoration: none; }
+        
         /* Modal */
         .custom-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;}
-        .modal-content { background:#1e293b; border:1px solid #475569; padding:30px; border-radius:15px; text-align:center; color:white; width: 90%; max-width: 350px; }
-        .modal-logo { font-size: 20px; font-weight: bold; margin-bottom: 20px; color:#facc15; letter-spacing: 2px; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; margin-top: 25px; }
+        .modal-content { background:#1e293b; border:1px solid #475569; padding:30px; border-radius:15px; text-align:center; color:white; width: 350px; }
     </style>
 </head>
 <body>
-    
-    <!-- Navbar -->
-    <div class="header" style="background-color: #1e1e1e; padding: 15px; border-bottom:1px solid #333">
+    <div class="header" style="background:#1e1e1e; padding:15px;">
         <nav class="navbar">
-            <a href="index.html" style="color:white; text-decoration:none; margin-right:20px; font-weight:bold">TRANG CHỦ</a>
-            <a href="booking.html" class="highlight" style="color:#facc15; text-decoration:none; font-weight:bold">ĐẶT LỊCH</a>
+            <a href="index.html" style="color:white; margin-right:20px; text-decoration:none">TRANG CHỦ</a>
+            <a href="booking.html" class="highlight" style="color:#facc15; font-weight:bold; text-decoration:none">ĐẶT LỊCH</a>
         </nav>
     </div>
 
@@ -69,36 +50,33 @@
     <div class="container">
         <div class="table-responsive">
             <table id="history-table">
-                <!-- 1. HEADERS CHUẨN KHỚP VỚI HÌNH ẢNH BẠN MUỐN -->
                 <thead>
                     <tr>
-                        <th style="width:50px">#ID</th>
-                        <th>Người Đặt</th>   <!-- Thêm cột này cho khớp -->
-                        <th>Chi tiết bàn</th>
-                        <th>Ngày & Giờ (VN)</th>
-                        <th>Tổng tiền</th>
-                        <th>Thanh Toán</th>
+                        <th>#ID</th>
+                        <th>Khách Hàng</th>
+                        <th>Chi Tiết Bàn</th>
+                        <th>Thời Gian (Chuẩn)</th>
+                        <th>Tiền & Thanh Toán</th>
                         <th>Trạng Thái</th>
-                        <th>Hủy</th>
+                        <th>Hành Động</th>
                     </tr>
                 </thead>
                 <tbody id="history-body">
-                    <tr><td colspan="8" style="text-align:center; padding: 30px; color:#888">Đang tải dữ liệu...</td></tr>
+                    <tr><td colspan="7" style="text-align:center; padding: 30px; color:#888">Đang tải...</td></tr>
                 </tbody>
             </table>
         </div>
         <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a>
     </div>
 
-    <!-- MODAL HỦY -->
+    <!-- MODAL -->
     <div id="confirm-modal" class="custom-modal">
         <div class="modal-content">
-            <div class="modal-logo">71 BILLIARDS</div>
-            <h3 style="margin-bottom:10px; font-size:18px">Xác nhận hủy đơn?</h3>
-            <p style="color:#94a3b8; font-size:13px">Hành động này không thể hoàn tác.</p>
-            <div class="btn-group">
-                <button onclick="closeConfirmModal()" style="padding:10px 20px; border-radius:5px; border:none; cursor:pointer;">Giữ lại</button>
-                <button onclick="executeCancel()" style="padding:10px 20px; border-radius:5px; border:none; cursor:pointer; background:#ef4444; color:white;">Đồng ý Hủy</button>
+            <h3 style="margin-bottom:10px; color:#facc15">Xác nhận hủy?</h3>
+            <p style="font-size:13px; color:#ccc">Hành động này không thể hoàn tác.</p>
+            <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
+                <button onclick="document.getElementById('confirm-modal').style.display='none'" style="padding:8px 16px;">Giữ lại</button>
+                <button onclick="executeCancel()" style="padding:8px 16px; background:#ef4444; border:none; color:white;">Đồng ý</button>
             </div>
         </div>
     </div>
@@ -107,22 +85,34 @@
         const API_URL = '/api';
         let deleteIdTemp = null;
 
-        // Check Login
         const userStr = localStorage.getItem('user_info') || localStorage.getItem('user');
         if (!userStr) window.location.href = 'login.html';
         const currentUser = JSON.parse(userStr);
-        document.getElementById('user-display-name').innerText = currentUser.full_name || currentUser.username;
+        document.getElementById('user-display-name').innerText = currentUser.username;
 
-        // --- FORMAT ---
-        function formatMoney(amount) {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount || 0);
+        const fmtMoney = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
+
+        // --- HÀM XỬ LÝ GIỜ (RAW UTC - KHÔNG BỊ CỘNG GIỜ) ---
+        // Server lưu: "2026-01-18T13:00:00.000Z" (Dù chuỗi có chữ Z, nhưng nội dung là 13:00 đúng ý bạn nhập)
+        // Ta sẽ cắt chuỗi để lấy đúng 13:00, không cho nó tự convert.
+        function getRawTime(isoString) {
+            if(!isoString) return "";
+            const d = new Date(isoString);
+            // Lấy giờ UTC gốc (13:00) thay vì giờ local (20:00)
+            const h = d.getUTCHours().toString().padStart(2, '0');
+            const m = d.getUTCMinutes().toString().padStart(2, '0');
+            return `${h}:${m}`;
+        }
+        
+        function getRawDate(isoString) {
+            if(!isoString) return "";
+            const d = new Date(isoString);
+            const D = d.getUTCDate().toString().padStart(2, '0');
+            const M = (d.getUTCMonth()+1).toString().padStart(2, '0');
+            const Y = d.getUTCFullYear();
+            return `${D}/${M}/${Y}`;
         }
 
-        // --- FIX LỖI GIỜ (Dùng TimeZone Asia/Ho_Chi_Minh) ---
-        const timeOpts = { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Ho_Chi_Minh' };
-        const dateOpts = { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Ho_Chi_Minh' };
-
-        // --- LOAD DATA ---
         fetch(`${API_URL}/history/${currentUser.id}`)
             .then(res => res.json())
             .then(data => {
@@ -130,73 +120,58 @@
                 tbody.innerHTML = ''; 
 
                 if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 30px; color:#888">Bạn chưa đặt bàn nào.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color:#888">Chưa có dữ liệu.</td></tr>`;
                     return;
                 }
 
                 data.forEach(item => {
-                    const start = new Date(item.start_time);
-                    const now = new Date();
-                    // So sánh giờ server để tính hạn hủy (UTC vs UTC)
-                    const minutesLeft = (start - now) / 60000;
-
-                    // TRẠNG THÁI
-                    let statusHtml = '';
-                    let actionHtml = ''; // Nút hủy
-
-                    if (item.status === 'confirmed') {
-                        statusHtml = `<span class="status-badge st-confirmed"><i class="fa-solid fa-check"></i> ĐÃ ĐẶT (XONG)</span>`;
-                    } else if (item.status === 'pending') {
-                        statusHtml = `<span class="status-badge st-pending"><i class="fa-solid fa-hourglass-half"></i> CHỜ THANH TOÁN</span>`;
-                        actionHtml = `<button class="btn-cancel" onclick="openConfirmModal(${item.id})">Hủy đơn</button>`;
-                    } else if (item.status === 'cancelled') {
-                        statusHtml = `<span class="status-badge st-cancelled"><i class="fa-solid fa-xmark"></i> ĐÃ HỦY</span>`;
-                        actionHtml = '<span style="color:#555">-</span>';
-                    } else {
-                        statusHtml = `<span class="status-badge st-completed"><i class="fa-solid fa-flag-checkered"></i> HOÀN TẤT</span>`;
-                        actionHtml = '<span style="color:#555">-</span>';
+                    // Logic Nút Hủy
+                    let statusHtml='', actionHtml='-';
+                    
+                    if(item.status === 'confirmed') statusHtml = `<span class="status-badge st-confirmed">✅ ĐÃ ĐẶT</span>`;
+                    else if(item.status === 'pending') {
+                         statusHtml = `<span class="status-badge st-pending">⌛ CHỜ TT</span>`;
+                         actionHtml = `<button class="btn-cancel" onclick="askCancel(${item.id})">Hủy</button>`;
                     }
+                    else if(item.status === 'cancelled') statusHtml = `<span class="status-badge st-cancelled">❌ ĐÃ HỦY</span>`;
+                    else statusHtml = `<span class="status-badge st-completed">🏁 HOÀN TẤT</span>`;
 
-                    // THANH TOÁN
+                    // Thanh toán
                     const pMethod = item.payment_method || 'Tiền mặt';
                     const payHtml = pMethod.includes('Tiền mặt') 
-                        ? `<span class="pay-tag pay-cash">${pMethod}</span>` 
-                        : `<span class="pay-tag pay-online">${pMethod}</span>`;
+                        ? `<span class="pay-cash">💵 Tiền mặt</span>` 
+                        : `<span class="pay-online">💳 Chuyển khoản</span>`;
 
-                    // TÊN KHÁCH (Lấy tên người nhập form, hoặc tên user)
-                    const guestName = item.customer_name || currentUser.full_name || currentUser.username;
-
-                    // CHI TIẾT BÀN
-                    const tableDisplay = `<strong style="color:#facc15; font-size:15px">${item.table_name}</strong><br><small style="color:#888">CN ${item.branch_id || '1'}</small>`;
-
-                    // NGÀY GIỜ (FIX HIỂN THỊ 12H THÀNH ĐÚNG 12H VN)
-                    const timeShow = `<b style="font-size:15px">${start.toLocaleTimeString('vi-VN', timeOpts)}</b> đến <b style="font-size:15px">${new Date(item.end_time).toLocaleTimeString('vi-VN', timeOpts)}</b><br><span style="color:#888; font-size:13px">${start.toLocaleDateString('vi-VN', dateOpts)}</span>`;
-
-                    // XUẤT RA HTML
                     tbody.innerHTML += `
                         <tr>
                             <td><span style="color:#666">#${item.id}</span></td>
-                            <td style="font-weight:bold">${guestName}</td>
-                            <td>${tableDisplay}</td>
-                            <td>${timeShow}</td>
-                            <td style="color:#4ade80; font-weight:bold; font-size:15px">${formatMoney(item.total_price)}</td>
-                            <td>${payHtml}</td>
+                            <td><b>${item.customer_name || currentUser.username}</b></td>
+                            <td>
+                                <strong style="color:#facc15">${item.table_name || '...'}</strong>
+                                <br><small style="color:#888">CN ${item.branch_id || 1}</small>
+                            </td>
+                            <td>
+                                <!-- SỬ DỤNG HÀM MỚI (Raw Time) -->
+                                <b>${getRawTime(item.start_time)} - ${getRawTime(item.end_time)}</b>
+                                <br><small style="color:#777">${getRawDate(item.start_time)}</small>
+                            </td>
+                            <td>
+                                <div style="color:#4ade80;font-weight:bold">${fmtMoney.format(item.total_price)}</div>
+                                <div>${payHtml}</div>
+                            </td>
                             <td>${statusHtml}</td>
                             <td style="text-align:center">${actionHtml}</td>
                         </tr>
                     `;
                 });
-            })
-            .catch(err => console.error(err));
+            });
 
-        function openConfirmModal(id) { deleteIdTemp = id; document.getElementById('confirm-modal').style.display = 'flex'; }
-        function closeConfirmModal() { deleteIdTemp = null; document.getElementById('confirm-modal').style.display = 'none'; }
-        
+        function askCancel(id) { deleteIdTemp = id; document.getElementById('confirm-modal').style.display='flex'; }
         async function executeCancel() {
-            if (!deleteIdTemp) return;
+            if(!deleteIdTemp) return;
             await fetch(`${API_URL}/booking/cancel`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ booking_id: deleteIdTemp })
+                method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({booking_id: deleteIdTemp})
             });
             location.reload();
         }

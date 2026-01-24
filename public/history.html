@@ -2,39 +2,51 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Lịch Sử - 71 Billiards</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch Sử - 71 Billiards</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    
     <style>
-        /* CSS Gốc Giữ Nguyên */
         body { background-color: #050505; color: #fff; min-height: 100vh; display: flex; flex-direction: column; font-family: 'Segoe UI', sans-serif; }
         .page-header { padding: 40px 20px; text-align: center; background: linear-gradient(to bottom, #111, #050505); border-bottom: 1px solid #333; }
-        .page-header h1 { margin: 0; font-size: 28px; text-transform: uppercase; color: #facc15; }
+        .page-header h1 { margin: 0; font-size: 28px; text-transform: uppercase; color: #facc15; letter-spacing: 2px; }
         .container { max-width: 1200px; margin: 30px auto; padding: 0 15px; flex: 1; }
-        .table-responsive { overflow-x: auto; background-color: #1e1e1e; border-radius: 12px; }
+        
+        .table-responsive { overflow-x: auto; background:#1e1e1e; border-radius:10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         table { width: 100%; border-collapse: collapse; min-width: 900px; }
-        th { background: #2c2c2c; color: #ccc; padding: 15px; text-align: left; font-size:12px; white-space:nowrap; border-bottom: 2px solid #444; }
+        th { background-color: #333; padding: 15px; text-align: left; color: #aaa; border-bottom: 2px solid #444; white-space: nowrap; font-size:12px; }
         td { padding: 15px; border-bottom: 1px solid #333; font-size: 14px; vertical-align: middle; }
         
-        .status-badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; white-space: nowrap; font-size: 11px;}
-        .st-confirmed { color: #4ade80; border: 1px solid #22c55e; }
-        .st-pending   { color: #facc15; border: 1px solid #eab308; }
-        .st-cancelled { color: #f87171; border: 1px solid #ef4444; }
-        .st-completed { color: #94a3b8; border: 1px solid #64748b; }
-        
-        .pay-cash { color: #facc15; font-weight: bold; font-size:12px; }
-        .pay-online { color: #38bdf8; font-weight: bold; font-size:12px; }
+        /* TRẠNG THÁI */
+        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; white-space: nowrap; display: inline-block; }
+        .st-confirmed { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; } 
+        .st-pending   { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; }
+        .st-cancelled { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .st-completed { background: rgba(148, 163, 184, 0.2); color: #cbd5e1; border: 1px solid #64748b; }
 
-        .btn-cancel { color: #f87171; border: 1px solid #ef4444; background:none; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .pay-tag { font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .pay-cash { color: #facc15; } .pay-online { color: #38bdf8; }
+
+        /* BUTTONS */
+        .btn-cancel { color: #f87171; border: 1px solid #ef4444; background:none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: 500; font-size:12px; margin-left: 5px; }
+        .btn-cancel:hover { background: #ef4444; color: white; }
+
+        .btn-pay-now { background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .btn-pay-now:hover { background: #218838; }
+
         .back-btn { display: inline-block; margin-top: 20px; color: #888; text-decoration: none; }
         
-        /* Modal */
-        .custom-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;}
-        .modal-content { background:#1e293b; border:1px solid #475569; padding:30px; border-radius:15px; text-align:center; color:white; width: 350px; }
+        /* MODAL */
+        .custom-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; }
+        .modal-content { background:white; border-radius:15px; text-align:center; color:#333; width: 90%; max-width: 350px; padding: 25px; position:relative;}
+        .close-icon { position:absolute; top:10px; right:15px; font-size:25px; cursor:pointer; color:#888; }
+        .close-icon:hover { color:red; }
+        .qr-img { width: 100%; max-width: 250px; border: 2px solid #28a745; border-radius: 10px; margin: 10px 0; }
     </style>
 </head>
 <body>
+    
     <div class="header" style="background:#1e1e1e; padding:15px;">
         <nav class="navbar">
             <a href="index.html" style="color:white; margin-right:20px; text-decoration:none">TRANG CHỦ</a>
@@ -44,7 +56,7 @@
 
     <div class="page-header">
         <h1>Lịch Sử Đặt Bàn</h1>
-        <p>Xin chào, <b id="user-display-name" style="color:white;">...</b></p>
+        <p>Tài khoản: <b id="user-display-name">...</b></p>
     </div>
 
     <div class="container">
@@ -53,30 +65,45 @@
                 <thead>
                     <tr>
                         <th>#ID</th>
-                        <th>Khách Hàng</th>
-                        <th>Chi Tiết Bàn</th>
-                        <th>Thời Gian (Chuẩn)</th>
-                        <th>Tiền & Thanh Toán</th>
+                        <th>Chi tiết</th>
+                        <th>Thời Gian</th>
+                        <th>Tiền & TT</th>
                         <th>Trạng Thái</th>
                         <th>Hành Động</th>
                     </tr>
                 </thead>
                 <tbody id="history-body">
-                    <tr><td colspan="7" style="text-align:center; padding: 30px; color:#888">Đang tải...</td></tr>
+                    <tr><td colspan="6" style="text-align:center; padding: 30px; color:#888">Đang tải dữ liệu...</td></tr>
                 </tbody>
             </table>
         </div>
         <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ</a>
     </div>
 
-    <!-- MODAL -->
-    <div id="confirm-modal" class="custom-modal">
+    <!-- MODAL THANH TOÁN LẠI -->
+    <div id="payment-modal" class="custom-modal">
         <div class="modal-content">
-            <h3 style="margin-bottom:10px; color:#facc15">Xác nhận hủy?</h3>
-            <p style="font-size:13px; color:#ccc">Hành động này không thể hoàn tác.</p>
+            <span class="close-icon" onclick="closePaymentModal()">&times;</span>
+            <h3 style="color:#28a745; margin:0">THANH TOÁN LẠI</h3>
+            <p style="font-size:13px; color:#666; margin-top:5px;">Vui lòng quét mã để hoàn tất đơn hàng.</p>
+            
+            <div id="qr-container"></div>
+            
+            <div style="background:#f9f9f9; padding:10px; border-radius:8px; font-size:13px; color:#d35400; font-weight:bold; margin-top:10px">
+                Nội dung CK: <span id="ck-content">...</span>
+            </div>
+            
+            <p style="font-size:12px; margin-top:10px; color:#888"><i class="fa-solid fa-sync fa-spin"></i> Hệ thống đang kiểm tra giao dịch...</p>
+        </div>
+    </div>
+
+    <!-- MODAL HỦY -->
+    <div id="confirm-modal" class="custom-modal">
+        <div class="modal-content" style="background:#1e293b; border:1px solid #444; color:white">
+            <h3 style="margin-bottom:10px; color:#facc15">Xác nhận hủy đơn?</h3>
             <div style="margin-top:20px; display:flex; gap:10px; justify-content:center;">
                 <button onclick="document.getElementById('confirm-modal').style.display='none'" style="padding:8px 16px;">Giữ lại</button>
-                <button onclick="executeCancel()" style="padding:8px 16px; background:#ef4444; border:none; color:white;">Đồng ý</button>
+                <button onclick="executeCancel()" style="padding:8px 16px; background:#ef4444; border:none; color:white;">Hủy</button>
             </div>
         </div>
     </div>
@@ -84,81 +111,80 @@
     <script>
         const API_URL = '/api';
         let deleteIdTemp = null;
+        let checkInterval = null;
+
+        // CẤU HÌNH NGÂN HÀNG (Giống trang booking)
+        const BANK_ID = 'MB'; const ACC_NO = '07118042005'; const ACC_NAME = 'PHAM HOAI AN';
 
         const userStr = localStorage.getItem('user_info') || localStorage.getItem('user');
         if (!userStr) window.location.href = 'login.html';
         const currentUser = JSON.parse(userStr);
         document.getElementById('user-display-name').innerText = currentUser.username;
 
+        // Format
         const fmtMoney = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
-
-        // --- HÀM XỬ LÝ GIỜ (RAW UTC - KHÔNG BỊ CỘNG GIỜ) ---
-        // Server lưu: "2026-01-18T13:00:00.000Z" (Dù chuỗi có chữ Z, nhưng nội dung là 13:00 đúng ý bạn nhập)
-        // Ta sẽ cắt chuỗi để lấy đúng 13:00, không cho nó tự convert.
-        function getRawTime(isoString) {
-            if(!isoString) return "";
-            const d = new Date(isoString);
-            // Lấy giờ UTC gốc (13:00) thay vì giờ local (20:00)
-            const h = d.getUTCHours().toString().padStart(2, '0');
-            const m = d.getUTCMinutes().toString().padStart(2, '0');
-            return `${h}:${m}`;
-        }
         
-        function getRawDate(isoString) {
-            if(!isoString) return "";
-            const d = new Date(isoString);
-            const D = d.getUTCDate().toString().padStart(2, '0');
-            const M = (d.getUTCMonth()+1).toString().padStart(2, '0');
-            const Y = d.getUTCFullYear();
-            return `${D}/${M}/${Y}`;
-        }
+        function getRawTime(iso) { if(!iso) return ""; const d = new Date(iso); return d.getUTCHours().toString().padStart(2,'0')+':'+d.getUTCMinutes().toString().padStart(2,'0'); }
+        function getRawDate(iso) { if(!iso) return ""; const d = new Date(iso); return d.getUTCDate()+'/'+(d.getUTCMonth()+1); }
 
+        // LOAD DATA
         fetch(`${API_URL}/history/${currentUser.id}`)
             .then(res => res.json())
             .then(data => {
                 const tbody = document.getElementById('history-body');
                 tbody.innerHTML = ''; 
 
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 30px; color:#888">Chưa có dữ liệu.</td></tr>`;
-                    return;
-                }
+                if (data.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding: 30px; color:#888">Trống.</td></tr>`; return; }
 
                 data.forEach(item => {
-                    // Logic Nút Hủy
-                    let statusHtml='', actionHtml='-';
-                    
-                    if(item.status === 'confirmed') statusHtml = `<span class="status-badge st-confirmed">✅ ĐÃ ĐẶT</span>`;
-                    else if(item.status === 'pending') {
-                         statusHtml = `<span class="status-badge st-pending">⌛ CHỜ TT</span>`;
-                         actionHtml = `<button class="btn-cancel" onclick="askCancel(${item.id})">Hủy</button>`;
+                    const start = new Date(item.start_time);
+                    const now = new Date();
+                    const minLeft = (start - now) / 60000;
+
+                    let statusHtml = '', actionHtml = '-';
+
+                    if (item.status === 'confirmed') {
+                        statusHtml = `<span class="status-badge st-confirmed">✅ Đã đặt</span>`;
+                    } 
+                    else if (item.status === 'pending') {
+                        statusHtml = `<span class="status-badge st-pending">⌛ Chờ TT</span>`;
+                        // THÊM NÚT THANH TOÁN
+                        // Chỉ hiện nút thanh toán nếu chọn hình thức chuyển khoản/online
+                        const isOnline = item.payment_method && !item.payment_method.includes('Tiền mặt');
+                        if(isOnline) {
+                            actionHtml = `
+                                <button class="btn-pay-now" onclick="rePay(${item.id}, ${item.total_price})">Thanh toán</button>
+                                <button class="btn-cancel" onclick="askCancel(${item.id})">Hủy</button>
+                            `;
+                        } else {
+                            actionHtml = `<button class="btn-cancel" onclick="askCancel(${item.id})">Hủy</button>`;
+                        }
+                    } 
+                    else if (item.status === 'cancelled') {
+                        statusHtml = `<span class="status-badge st-cancelled">Đã hủy</span>`;
+                    } else {
+                        statusHtml = `<span class="status-badge st-completed">Hoàn tất</span>`;
                     }
-                    else if(item.status === 'cancelled') statusHtml = `<span class="status-badge st-cancelled">❌ ĐÃ HỦY</span>`;
-                    else statusHtml = `<span class="status-badge st-completed">🏁 HOÀN TẤT</span>`;
+
+                    // Tên Bàn & Chi nhánh
+                    const desc = `
+                        <strong style="color:#facc15">${item.table_name || '...'}</strong><br>
+                        <small style="color:#888">CN ${item.branch_id || 1}</small>
+                    `;
+                    
+                    // Giờ
+                    const timeShow = `<b>${getRawTime(item.start_time)} - ${getRawTime(item.end_time)}</b> <span style="font-size:11px;color:#777">(${getRawDate(item.start_time)})</span>`;
 
                     // Thanh toán
                     const pMethod = item.payment_method || 'Tiền mặt';
-                    const payHtml = pMethod.includes('Tiền mặt') 
-                        ? `<span class="pay-cash">💵 Tiền mặt</span>` 
-                        : `<span class="pay-online">💳 Chuyển khoản</span>`;
+                    const payHtml = pMethod.includes('Tiền mặt') ? `<span class="pay-cash">Tiền mặt</span>` : `<span class="pay-online">Chuyển khoản</span>`;
 
                     tbody.innerHTML += `
                         <tr>
-                            <td><span style="color:#666">#${item.id}</span></td>
-                            <td><b>${item.customer_name || currentUser.username}</b></td>
-                            <td>
-                                <strong style="color:#facc15">${item.table_name || '...'}</strong>
-                                <br><small style="color:#888">CN ${item.branch_id || 1}</small>
-                            </td>
-                            <td>
-                                <!-- SỬ DỤNG HÀM MỚI (Raw Time) -->
-                                <b>${getRawTime(item.start_time)} - ${getRawTime(item.end_time)}</b>
-                                <br><small style="color:#777">${getRawDate(item.start_time)}</small>
-                            </td>
-                            <td>
-                                <div style="color:#4ade80;font-weight:bold">${fmtMoney.format(item.total_price)}</div>
-                                <div>${payHtml}</div>
-                            </td>
+                            <td>#${item.id}</td>
+                            <td>${desc}</td>
+                            <td>${timeShow}</td>
+                            <td><b style="color:#4ade80">${fmtMoney.format(item.total_price)}</b><br>${payHtml}</td>
                             <td>${statusHtml}</td>
                             <td style="text-align:center">${actionHtml}</td>
                         </tr>
@@ -166,13 +192,41 @@
                 });
             });
 
+        // --- CHỨC NĂNG THANH TOÁN LẠI (RE-PAY) ---
+        function rePay(bookingId, amount) {
+            const content = `BIDA ${bookingId}`;
+            const qrUrl = `https://img.vietqr.io/image/${BANK_ID}-${ACC_NO}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(content)}&accountName=${encodeURIComponent(ACC_NAME)}`;
+            
+            document.getElementById('qr-container').innerHTML = `<img src="${qrUrl}" class="qr-img">`;
+            document.getElementById('ck-content').innerText = content;
+            document.getElementById('payment-modal').style.display = 'flex';
+
+            // Auto check
+            if(checkInterval) clearInterval(checkInterval);
+            checkInterval = setInterval(async () => {
+                try {
+                    const res = await fetch(`${API_URL}/booking/status/${bookingId}`);
+                    const data = await res.json();
+                    if(data.status === 'confirmed') {
+                        clearInterval(checkInterval);
+                        alert("✅ TIỀN ĐÃ VỀ! Giao dịch thành công.");
+                        location.reload();
+                    }
+                } catch(e){}
+            }, 3000);
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+            if(checkInterval) clearInterval(checkInterval);
+        }
+
+        // --- HỦY ---
         function askCancel(id) { deleteIdTemp = id; document.getElementById('confirm-modal').style.display='flex'; }
+        function closeConfirmModal() { deleteIdTemp = null; document.getElementById('confirm-modal').style.display='none'; }
         async function executeCancel() {
             if(!deleteIdTemp) return;
-            await fetch(`${API_URL}/booking/cancel`, {
-                method:'POST', headers:{'Content-Type':'application/json'},
-                body: JSON.stringify({booking_id: deleteIdTemp})
-            });
+            await fetch(`${API_URL}/booking/cancel`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({booking_id:deleteIdTemp})});
             location.reload();
         }
     </script>
